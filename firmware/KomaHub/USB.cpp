@@ -49,12 +49,12 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
     if (data[pos++] != 'K')
         return;
 
-    while (pos < maxlen) {
-        uint8_t cmdlength = data[pos++];
-        if (pos+cmdlength >= maxlen) {
-            return;
-        }
+    uint8_t cmdlength = data[pos++];
+    if (pos+cmdlength >= maxlen) {
+        return;
+    }
 
+    while (pos < maxlen) {
         uint8_t command = data[pos++];
         switch (command) {
             case END: {
@@ -94,19 +94,19 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case FACTORYRESET: {
-                if (cmdlength-1 != sizeof(FactoryResetCommand)) {
-                    pos += cmdlength-1;
+                if (cmdlength-1 < sizeof(FactoryResetCommand)) {
+                    pos += sizeof(FactoryResetCommand);
                     continue;
                 }
 
                 FactoryResetCommand* cmd = (FactoryResetCommand*)&data[pos];
                 USB::hubConfiguration->factoryReset(cmd->serial, cmd->numberOfOutputs, cmd->r6ohms, cmd->r7ohms, cmd->features, cmd->sqmZeroPoint, cmd->fuseSpeed);
-                pos += cmdlength-1;
+                pos += sizeof(FactoryResetCommand);
                 break;
             }
             case SETRELAY: {
-                if (cmdlength-1 != sizeof(SetRelayCommand)) {
-                    pos += cmdlength-1;
+                if (cmdlength-1 < sizeof(SetRelayCommand)) {
+                    pos += sizeof(SetRelayCommand);
                     continue;
                 }
 
@@ -117,12 +117,12 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                     hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
                 }
 //                hubConfiguration->saveState();
-                pos += cmdlength-1;
+                pos += sizeof(SetRelayCommand);
                 break;
             }
             case SETPWMDUTY: {
-                if (cmdlength-1 != sizeof(SetPwmDutyCommand)) {
-                    pos += cmdlength-1;
+                if (cmdlength-1 < sizeof(SetPwmDutyCommand)) {
+                    pos += sizeof(SetPwmDutyCommand);
                     continue;
                 }
 
@@ -134,19 +134,19 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
 //                hubConfiguration->saveState();
-                pos += cmdlength-1;
+                pos += sizeof(SetPwmDutyCommand);
                 break;
             }
             case RESETFUSE: {
-                if (cmdlength-1 != sizeof(ResetFuseCommand)) {
-                    pos += cmdlength-1;
+                if (cmdlength-1 < sizeof(ResetFuseCommand)) {
+                    pos += sizeof(ResetFuseCommand);
                     continue;
                 }
 
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
                 hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
 //                hubConfiguration->saveState();
-                pos += cmdlength-1;
+                pos += sizeof(ResetFuseCommand);
                 break;
             }
         }
