@@ -29,7 +29,11 @@ def send(cmd, data):
     print bytes(buffer)
     rh.open(vid=KOMAHUB_VID, pid=KOMAHUB_PID)
     rh.send("".join(map(lambda x:chr(x), buffer)), 1000)
-    data = rh.recv(64, 1000)
+    data = None
+    try:
+	data = rh.recv(64, 500)
+    except IOError:
+	pass
     if data and len(data) > 0:
         print 'Received',
         print "".join(map(lambda x: hex(ord(x))[2:]+' ', data))
