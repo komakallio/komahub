@@ -21,7 +21,7 @@ def cmdlineargs(args):
     return (int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(float(sys.argv[5])*10), int(sys.argv[6]))
 
 def inttobytes(n):
-    return ((n&0xFF00)>>8, n&0xFF)
+    return (n&0xFF, (n&0xFF00)>>8)
 
 def factoryreset(serial, outputs, r6ohms, r7ohms, features, sqmzero, fusespeed):
     rh = TeensyRawhid.Rawhid()
