@@ -25,6 +25,7 @@
 #include <wiring_private.h>
 #include "AnalogInput.h"
 #include "HubConfiguration.h"
+#include "KomaHubPins.h"
 
 #define RINGBUFFER_SIZE 64
 
@@ -50,14 +51,30 @@ static void adc_start_measure(int pin) {
 }
 
 void AnalogInput::init(HubConfiguration* hubConfiguration) {
+    analogReference(EXTERNAL);
+
+    // Disable unused analog inputs
+    DIDR0 = 0xF2; // F1, F4, F5, F6, F7
+    DIDR2 = 0x30; // B5, B6
+
+    pinMode(KomaHub::VSENSE, INPUT);
+    pinMode(KomaHub::SENSE1, INPUT);
+    pinMode(KomaHub::SENSE2, INPUT);
+    pinMode(KomaHub::SENSE3, INPUT);
+    pinMode(KomaHub::SENSE4, INPUT);
+    pinMode(KomaHub::SENSE5, INPUT);
+    pinMode(KomaHub::SENSE6, INPUT);
+
+    memset(averages, 0, 8*sizeof(uint16_t));
     ringbufferHead = 0;
     pin = 0;
 
+/*
     cli();
     adc_start_measure(pin);
-   	sei();
+   	sei(); */
 }
-
+/*
 ISR(ADC_vect) {
 	uint16_t h = ringbufferHead;
 	int16_t val = ADC;
@@ -71,14 +88,22 @@ ISR(ADC_vect) {
     pin &= 0x7; // loop through 8 pins
     adc_start_measure(pin);
 }
-
+*/
 void AnalogInput::getAverageValues(uint16_t* arr) {
     memcpy(arr, &averages[0], 8*sizeof(uint16_t));
 }
 
 void AnalogInput::loop() {
     memset(&averages[0], 0, 8*sizeof(uint16_t));
-
+    averages[0] = analogRead(KomaHub::VSENSE);
+    averages[1] = analogRead(KomaHub::SENSE1);
+    averages[2] = analogRead(KomaHub::SENSE2);
+    averages[3] = analogRead(KomaHub::SENSE3);
+    averages[4] = analogRead(KomaHub::SENSE4);
+    averages[5] = analogRead(KomaHub::SENSE5);
+    averages[6] = analogRead(KomaHub::SENSE6);
+    
+/*
     // rewind 32 measurement rounds
     int pos = (ringbufferHead - 32*8) & 0x1F8;
 
@@ -93,5 +118,5 @@ void AnalogInput::loop() {
     for (int i = 0; i < 8; i++)  {
         // normalize to 0..1023, round correctly
         averages[i] = (averages[i] >> 5) + ((averages[i] & 0x10) >> 4);
-    }
+    }*/
 }

@@ -26,6 +26,7 @@
 #include "AnalogInput.h"
 #include "Config.h"
 #include "HubConfiguration.h"
+#include "PowerOutputs.h"
 #include "SQM.h"
 #include "TemperatureSensors.h"
 #include "USB.h"
@@ -36,7 +37,8 @@ static Scheduler taskScheduler;
 static HubConfiguration configuration;
 static Task usbTask(10, TASK_FOREVER, &USB::loop);
 static Task sqmTask(1000, TASK_FOREVER, &SQM::loop);
-static Task analogInputTask(100, TASK_FOREVER, &AnalogInput::loop);
+static Task analogInputTask(1000, TASK_FOREVER, &AnalogInput::loop);
+static Task powerOutputsTask(10, TASK_FOREVER, &PowerOutputs::loop);
 static Task temperatureSensorsTask(2000, TASK_FOREVER, &TemperatureSensors::loop);
 static Task weatherTask(2000, TASK_FOREVER, &Weather::loop);
 static Task voltageMonitorTask(1000, TASK_FOREVER, &VoltageMonitor::loop);
@@ -47,13 +49,16 @@ void setup() {
     taskScheduler.init();
     USB::init(&configuration);
     taskScheduler.addTask(usbTask);
-/*
+
+    PowerOutputs::init(&configuration);
+    taskScheduler.addTask(powerOutputsTask);
+
     AnalogInput::init(&configuration);
     taskScheduler.addTask(analogInputTask);
 
-    VoltageMonitor::init();
+    VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
-
+/*
     if (configuration.getFactoryConfig().features.sqm) {
         SQM::init(&configuration);
         taskScheduler.addTask(sqmTask);

@@ -51,7 +51,7 @@ public:
     };
 
     struct OutputSettings {
-        Output outputs[7];
+        Output outputs[6];
         char reserved[16];
         // 128 bytes
     };

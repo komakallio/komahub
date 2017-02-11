@@ -22,23 +22,34 @@
  */
 
 #include "AnalogInput.h"
+#include "HubConfiguration.h"
 #include "VoltageMonitor.h"
 
 float VoltageMonitor::inputVoltage;
+float VoltageMonitor::outputPowers[6];
+HubConfiguration* VoltageMonitor::hubConfiguration;
 
-void VoltageMonitor::init() {
+void VoltageMonitor::init(HubConfiguration* configuration) {
+    VoltageMonitor::hubConfiguration = configuration;
 }
 
 void VoltageMonitor::loop() {
     uint16_t measurements[8];
     AnalogInput::getAverageValues(&measurements[0]);
 
-    inputVoltage = measurements[1] / 1000.0f; // VSENSE
-    if (inputVoltage < 10.0f) {
+    inputVoltage = hubConfiguration->getFactoryConfig().r6r7divisor * 4.096 * measurements[0] / 1024.0f;
+    if (inputVoltage < 10.0f || inputVoltage > 15.0f) {
         // shut down all ports?
+    }
+    for (int i = 0; i < 6; i++) {
+        outputPowers[i] = 10000 * 4.096 * measurements[i+1] / 1024.0f / 2000.0f;
     }
 }
 
 float VoltageMonitor::getInputVoltage() {
     return inputVoltage;
+}
+
+float VoltageMonitor::getOutputPower(int output) {
+    return outputPowers[output];
 }

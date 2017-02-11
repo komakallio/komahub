@@ -24,6 +24,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+#include "AnalogInput.h"
 #include "HubConfiguration.h"
 #include "USB.h"
 #include "USBCommands.h"
@@ -73,12 +74,22 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 *dst++ = state.fuseIsBlownBits;
                 *dst++ = state.relayIsPwmBits;
                 *dst++ = state.pwmIsFastBits;
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < 6; i++) {
                     *dst++ = state.pwmPercentages[i];
                 }
                 // voltage
                 *dst++ = (uint8_t)(VoltageMonitor::getInputVoltage() * 10);
                 // amps
+                for (int i = 0; i < 6; i++) {
+                    *dst++ = (uint8_t)(VoltageMonitor::getOutputPower(i) * 10);
+                }
+                uint16_t averages[8];
+                AnalogInput::getAverageValues(averages);
+                for (int i = 0; i < 7; i++) {
+                    *dst++ = averages[i] >> 8;
+                    *dst++ = averages[i] & 0xFF;
+                }
+
                 // temperatures
                 // weather
                 // sqm
@@ -89,6 +100,14 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 uint8_t *dst = usbSendBuffer;
                 for (unsigned int i = 0; i < sizeof(HubConfiguration::FactoryConfig); i++)
                     *dst++ = EEPROM.read(i);
+                RawHID.send(usbSendBuffer, 1000);
+                break;
+            }
+            case DUMPSTATE: {
+                uint8_t *dst = usbSendBuffer;
+                uint8_t *src = (uint8_t*)&hubConfiguration->getState();
+                for (unsigned int i = 0; i < sizeof(HubConfiguration::State); i++)
+                    *dst++ = src[i];
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
@@ -126,11 +145,6 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                     continue;
                 }
 
-                pinMode(11, OUTPUT);
-                digitalWrite(11, HIGH);
-                delay(1000);
-                digitalWrite(11, LOW);
-
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
 //                hubConfiguration->saveState();
@@ -147,6 +161,22 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
 //                hubConfiguration->saveState();
                 pos += sizeof(ResetFuseCommand);
+                break;
+            }
+            case CONFIGUREOUTPUT: {
+                if (cmdlength-1 < sizeof(ConfigureOutputCommand)) {
+                    pos += sizeof(ConfigureOutputCommand);
+                    continue;
+                }
+                HubConfiguration::State& state = hubConfiguration->getState();
+
+                ConfigureOutputCommand* cmd = (ConfigureOutputCommand*)&data[pos];
+                if (cmd->outputType == DC) {
+                    state.relayIsPwmBits &= !(1 << cmd->outputNumber);
+                } else {
+                    state.relayIsPwmBits |= (1 << cmd->outputNumber);
+                }
+                pos += sizeof(ConfigureOutputCommand);
                 break;
             }
         }

@@ -21,20 +21,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef VOLTAGEMONITOR_H
-#define VOLTAGEMONITOR_H
+#ifndef POWEROUTPUTS_H
+#define POWEROUTPUTS_H
 
-class VoltageMonitor {
+class PowerOutputs {
 public:
     static void init(class HubConfiguration* hubConfiguration);
     static void loop();
 
-    static float getInputVoltage();
-    static float getOutputPower(int output);
-
 private:
-    static float inputVoltage;
-    static float outputPowers[6];
     static class HubConfiguration* hubConfiguration;
 };
 

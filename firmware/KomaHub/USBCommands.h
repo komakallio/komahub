@@ -72,7 +72,6 @@ struct ResetFuseCommand {
 struct ConfigureOutputCommand {
     uint8_t outputNumber;
     uint8_t active;
-    uint8_t pwmEnabled;
     uint8_t outputType;  
 };
 
