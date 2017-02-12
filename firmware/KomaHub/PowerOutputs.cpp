@@ -44,23 +44,19 @@ static bool pwmState(const HubConfiguration::State& state, int pin) {
 
 void PowerOutputs::init(HubConfiguration* hubConfiguration) {
     PowerOutputs::hubConfiguration = hubConfiguration;
-    pinMode(11, OUTPUT);   
 }
 
 void PowerOutputs::loop() {
     const HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
     const HubConfiguration::State& state = hubConfiguration->getState();
+
     int outputPins[] = { KomaHub::P1, KomaHub::P2, KomaHub::P3, KomaHub::P4, KomaHub::P5, KomaHub::P6 };
     for (int pin = 0; pin < factoryConfig.numberOfOutputs; pin++) {
         if ((state.relayIsPwmBits & (1 << pin)) != 0 && 
             (state.pwmIsFastBits & (1 << pin)) == 0) {
             digitalWrite(outputPins[pin], pwmState(state, pin));
-            if (pin == 0)
-                digitalWrite(11, pwmState(state, pin) ? HIGH : LOW);
         } else {
             digitalWrite(outputPins[pin], (state.relayIsOpenBits & (1 << pin)) != 0 ? HIGH : LOW);
-            if (pin == 0)
-                digitalWrite(11, (state.relayIsOpenBits & (1 << pin)) != 0 ? HIGH : LOW);
-          }
+        }
     }
 }
