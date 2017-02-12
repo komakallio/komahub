@@ -42,12 +42,20 @@ static const uint8_t PROGMEM adc_mapping[] = {
 uint16_t AnalogInput::averages[8];
 
 static void adc_start_measure(int pin) {
-    int mux = pgm_read_byte(adc_mapping + pin);
+    int adc = pgm_read_byte(adc_mapping + pin);
 
-	ADCSRA = (1<<ADEN) | ADC_PRESCALER;	// enable the ADC, interrupt disabled
-	ADCSRB = (1<<ADHSM) | (mux & 0x20);
-	ADMUX = w_analog_reference | (mux & 0x1F);		// configure mux and ref
-	ADCSRA = (1<<ADSC) | (1<<ADEN) | (1<<ADATE) | (1<<ADIE) | ADC_PRESCALER;
+    // Select ADC channel
+    if (adc < 8) {
+        ADMUX = w_analog_reference | (adc & 0x1F);
+        ADCSRB = (1<<ADHSM);
+    } else {
+        ADMUX = w_analog_reference | ((adc-8) & 0x1F);
+        ADCSRB = (1<<ADHSM) | (1 << MUX5);
+    }
+
+    // Enable ADC interrupt but no free-running mode; we'll trigger a new ADC operation
+    // in the ISR
+    ADCSRA = (1<<ADSC) | (1<<ADEN) | (1<<ADIE) | ADC_PRESCALER;
 }
 
 void AnalogInput::init(HubConfiguration* hubConfiguration) {
@@ -67,43 +75,38 @@ void AnalogInput::init(HubConfiguration* hubConfiguration) {
 
     memset(averages, 0, 8*sizeof(uint16_t));
     ringbufferHead = 0;
-    pin = 0;
+    pin = 1;
 
-/*
     cli();
     adc_start_measure(pin);
-   	sei(); */
+   	sei(); 
 }
-/*
+
 ISR(ADC_vect) {
 	uint16_t h = ringbufferHead;
-	int16_t val = ADC;
+    uint16_t val = ADC;
 
-    h = (h+1) & 0x1FF;
-    
     ringbuffer[h] = val;	// put new data into buffer
+    h = (h+1) & 0x1FF;
     ringbufferHead = h;
 
     pin++;
-    pin &= 0x7; // loop through 8 pins
+    if (pin == 8) {
+        // we read pins 1..8, fill out the 8th byte with zero
+        h = (h+1) & 0x1FF;
+        ringbuffer[h] = 0;
+        ringbufferHead = h;
+        pin = 1;
+    }
     adc_start_measure(pin);
 }
-*/
+
 void AnalogInput::getAverageValues(uint16_t* arr) {
     memcpy(arr, &averages[0], 8*sizeof(uint16_t));
 }
 
 void AnalogInput::loop() {
     memset(&averages[0], 0, 8*sizeof(uint16_t));
-    averages[0] = analogRead(KomaHub::VSENSE);
-    averages[1] = analogRead(KomaHub::SENSE1);
-    averages[2] = analogRead(KomaHub::SENSE2);
-    averages[3] = analogRead(KomaHub::SENSE3);
-    averages[4] = analogRead(KomaHub::SENSE4);
-    averages[5] = analogRead(KomaHub::SENSE5);
-    averages[6] = analogRead(KomaHub::SENSE6);
-    
-/*
     // rewind 32 measurement rounds
     int pos = (ringbufferHead - 32*8) & 0x1F8;
 
@@ -118,5 +121,5 @@ void AnalogInput::loop() {
     for (int i = 0; i < 8; i++)  {
         // normalize to 0..1023, round correctly
         averages[i] = (averages[i] >> 5) + ((averages[i] & 0x10) >> 4);
-    }*/
+    }
 }

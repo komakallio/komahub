@@ -62,8 +62,8 @@ public:
         uint8_t pwmIsFastBits;
         uint8_t relayIsOpenBits;
         uint8_t fuseIsBlownBits;
-        uint8_t pwmPercentages[7];
-        // 12 bytes
+        uint8_t pwmPercentages[6];
+        // 11 bytes
     };
 
 public:

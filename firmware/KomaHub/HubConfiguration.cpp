@@ -120,7 +120,7 @@ void HubConfiguration::resetConfiguration() {
     this->factoryConfig.fuseSpeed = 10;
 
     memset(&this->outputSettings, 0, sizeof(OutputSettings));
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 6; i++) {
         strncpy(this->outputSettings.outputs[i].name, (String("Output ") + String(i+1)).c_str(), 16);
         this->outputSettings.outputs[i].fuseCurrent = 50; // 5 amps
     }

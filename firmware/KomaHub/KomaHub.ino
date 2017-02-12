@@ -37,7 +37,7 @@ static Scheduler taskScheduler;
 static HubConfiguration configuration;
 static Task usbTask(10, TASK_FOREVER, &USB::loop);
 static Task sqmTask(1000, TASK_FOREVER, &SQM::loop);
-static Task analogInputTask(1000, TASK_FOREVER, &AnalogInput::loop);
+static Task analogInputTask(10, TASK_FOREVER, &AnalogInput::loop);
 static Task powerOutputsTask(10, TASK_FOREVER, &PowerOutputs::loop);
 static Task temperatureSensorsTask(2000, TASK_FOREVER, &TemperatureSensors::loop);
 static Task weatherTask(2000, TASK_FOREVER, &Weather::loop);
@@ -50,11 +50,11 @@ void setup() {
     USB::init(&configuration);
     taskScheduler.addTask(usbTask);
 
-    PowerOutputs::init(&configuration);
-    taskScheduler.addTask(powerOutputsTask);
-
     AnalogInput::init(&configuration);
     taskScheduler.addTask(analogInputTask);
+
+    PowerOutputs::init(&configuration);
+    taskScheduler.addTask(powerOutputsTask);
 
     VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
