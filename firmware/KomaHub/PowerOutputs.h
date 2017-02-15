@@ -30,6 +30,10 @@ public:
     static void loop();
 
 private:
+    static void tripFusesIfNecessary();
+    static void updatePowerOutputs();
+
+private:
     static class HubConfiguration* hubConfiguration;
 };
 

@@ -62,10 +62,6 @@ void HubConfiguration::loadStoredConfiguration() {
 
     eepromcpyfrom(&this->factoryConfig, FACTORYCONFIG_OFFSET, sizeof(FactoryConfig));
     if (memcmp(&this->factoryConfig.komahub[0], "KOMAHUB\0", 8) != 0) {
-        pinMode(11, OUTPUT);
-        digitalWrite(11, HIGH);
-        delay(1000);
-        digitalWrite(11, LOW);     
         resetConfiguration();
         return;
     }
@@ -78,7 +74,7 @@ void HubConfiguration::loadStoredConfiguration() {
 
 int HubConfiguration::findLatestStateIndex() {
     int max=0, index=0;
-    int maxBelow100=0, indexBelow100=0;
+    int maxBelow100=-1, indexBelow100=-1;
     for (unsigned int i = 0; i < MAX_STATE_INDEX; i++) {
         int counter = EEPROM.read(STATE_OFFSET + sizeof(State)*i);
         if (counter > max) {
@@ -91,7 +87,7 @@ int HubConfiguration::findLatestStateIndex() {
         }
     }
 
-    if (max == 255) {
+    if (max == 255 && indexBelow100 >= 0) {
         return indexBelow100;
     } else {
         return index;
@@ -127,6 +123,7 @@ void HubConfiguration::resetConfiguration() {
 
     memset(&this->state, 0, sizeof(State));
     this->state.counter = 1;
+    this->stateIndex = 0;
 }
 
 void HubConfiguration::initEEPROM(const FactoryConfig& factoryConfig, const OutputSettings& outputSettings, const State& state) {
@@ -153,7 +150,7 @@ HubConfiguration::State& HubConfiguration::getState() {
 void HubConfiguration::saveState() {
     this->state.counter++;
     this->stateIndex++;
-    if (this->stateIndex > MAX_STATE_INDEX) {
+    if (this->stateIndex >= MAX_STATE_INDEX) {
         this->stateIndex = 0;
     }
     eepromcpyto(STATE_OFFSET + sizeof(State)*this->stateIndex, &this->state, sizeof(State)); 

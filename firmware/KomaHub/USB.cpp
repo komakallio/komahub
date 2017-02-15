@@ -24,6 +24,8 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+#ifdef CORE_TEENSY_RAWHID
+
 #include "AnalogInput.h"
 #include "HubConfiguration.h"
 #include "USB.h"
@@ -103,6 +105,13 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
+            case DUMPOUTPUTS: {
+                uint8_t *dst = usbSendBuffer;
+                for (unsigned int i = 0; i < 64; i++)
+                    *dst++ = EEPROM.read(i + 32);
+                RawHID.send(usbSendBuffer, 1000);
+                break;
+            }
             case DUMPSTATE: {
                 uint8_t *dst = usbSendBuffer;
                 uint8_t *src = (uint8_t*)&hubConfiguration->getState();
@@ -113,7 +122,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case FACTORYRESET: {
-                if (cmdlength-1 < sizeof(FactoryResetCommand)) {
+                if (cmdlength-1 < (uint8_t)sizeof(FactoryResetCommand)) {
                     pos += sizeof(FactoryResetCommand);
                     continue;
                 }
@@ -124,7 +133,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
             case SETRELAY: {
-                if (cmdlength-1 < sizeof(SetRelayCommand)) {
+                if (cmdlength-1 < (uint8_t)sizeof(SetRelayCommand)) {
                     pos += sizeof(SetRelayCommand);
                     continue;
                 }
@@ -135,36 +144,37 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 } else {
                     hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
                 }
-//                hubConfiguration->saveState();
+                hubConfiguration->saveState();
                 pos += sizeof(SetRelayCommand);
                 break;
             }
             case SETPWMDUTY: {
-                if (cmdlength-1 < sizeof(SetPwmDutyCommand)) {
+                if (cmdlength-1 < (uint8_t)sizeof(SetPwmDutyCommand)) {
                     pos += sizeof(SetPwmDutyCommand);
                     continue;
                 }
 
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
-//                hubConfiguration->saveState();
+                hubConfiguration->saveState();
                 pos += sizeof(SetPwmDutyCommand);
                 break;
             }
             case RESETFUSE: {
-                if (cmdlength-1 < sizeof(ResetFuseCommand)) {
+                if (cmdlength-1 < (uint8_t)sizeof(ResetFuseCommand)) {
                     pos += sizeof(ResetFuseCommand);
                     continue;
                 }
 
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
                 hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
-//                hubConfiguration->saveState();
+                hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
+                hubConfiguration->saveState();
                 pos += sizeof(ResetFuseCommand);
                 break;
             }
             case CONFIGUREOUTPUT: {
-                if (cmdlength-1 < sizeof(ConfigureOutputCommand)) {
+                if (cmdlength-1 < (uint8_t)sizeof(ConfigureOutputCommand)) {
                     pos += sizeof(ConfigureOutputCommand);
                     continue;
                 }
@@ -198,3 +208,5 @@ void USB::handlePacket(uint8_t* buffer) {
 void USB::init(HubConfiguration* hubConfiguration) {
     USB::hubConfiguration = hubConfiguration;
 } 
+
+#endif

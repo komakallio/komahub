@@ -77,7 +77,6 @@ public:
     HubConfiguration::OutputSettings& getOutputSettings();
     HubConfiguration::State& getState();
 
-
 private:
     void initEEPROM(const FactoryConfig& factoryConfig, const OutputSettings& outputSettings, const State& state);
     void resetConfiguration();

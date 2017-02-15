@@ -107,10 +107,10 @@ void AnalogInput::getAverageValues(uint16_t* arr) {
 
 void AnalogInput::loop() {
     memset(&averages[0], 0, 8*sizeof(uint16_t));
-    // rewind 32 measurement rounds
-    int pos = (ringbufferHead - 32*8) & 0x1F8;
+    // rewind 16 measurement rounds
+    int pos = (ringbufferHead - 16*8) & 0x1F8;
 
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 16; i++) {
         volatile uint16_t *src = &ringbuffer[pos];
         for (int j = 0; j < 8; j++) {
             averages[j] += *src++;
@@ -120,6 +120,6 @@ void AnalogInput::loop() {
     }
     for (int i = 0; i < 8; i++)  {
         // normalize to 0..1023, round correctly
-        averages[i] = (averages[i] >> 5) + ((averages[i] & 0x10) >> 4);
+        averages[i] = (averages[i] >> 4) + ((averages[i] & 0x8) >> 2);
     }
 }
