@@ -24,6 +24,8 @@
 #include <TaskScheduler.h>
 #ifdef CORE_TEENSY_SERIAL
 #include <EEPROM.h>
+#elif defined(CORE_TEENSY_RAWHID) && !defined(CORE_KOMAHUB_OK)
+#error "KomaHub custom core (with proper USB vendor/product ids) not found!"
 #endif
 
 #include "AnalogInput.h"
