@@ -1,8 +1,8 @@
 import sys
 import TeensyRawhid
 
-KOMAHUB_VID = 0x16C0
-KOMAHUB_PID = 0x0470
+KOMAHUB_VID = 0x1209
+KOMAHUB_PID = 0x4242
 
 def usage():
     print 'usage: status.py'
@@ -16,10 +16,9 @@ def cmdlineargs(args):
 def inttobytes(n):
     return ((n&0xFF000000)>>24, (n&0xFF0000)>>16, (n&0xFF00)>>8, n&0xFF)
 
-def status():
-    cmd = 2
+def query(cmd):
     rh = TeensyRawhid.Rawhid()
-    buffer = [ord('K'), 1, 2]
+    buffer = [ord('K'), 1, cmd]
     while len(buffer) < 64:
         buffer.append(0)
     rh.open(vid=KOMAHUB_VID, pid=KOMAHUB_PID)
@@ -30,32 +29,48 @@ def status():
     except IOError:
 	    pass
     rh.close()
+    return data
+
+def factorysettings():
+    data = query(0x02)
     if data and len(data) > 0:
-        return { 
+        return {
             'firmwareMajor' : ord(data[0]),
             'firmwareMinor' : ord(data[1]),
-            'numberOfOutputs' : ord(data[2]),
-            'serial' : ord(data[3]) * 256 + ord(data[4]),
-            'relayIsOpen' : ord(data[5]),
-            'fuseIsBlown' : ord(data[6]),
-            'relayIsPwm' : ord(data[7]),
-            'pwmIsFast' : ord(data[8]),
-            'pwmPercentages' : [ ord(data[9]), ord(data[10]), ord(data[11]), ord(data[12]), ord(data[13]), ord(data[14]) ],
-            'inputVoltage' : float(ord(data[15])/10.0),
-            'outputCurrents' : [ float(ord(data[16])/10.0), float(ord(data[17])/10.0), float(ord(data[18])/10.0), float(ord(data[19])/10.0), float(ord(data[20])/10.0), float(ord(data[21])/10.0) ], 
+#            'numberOfOutputs' : ord(data[2]),
+            'serial' : ord(data[2]) * 256 + ord(data[3])
+#            'relayIsOpen' : ord(data[5]),
+#            'fuseIsBlown' : ord(data[6]),
+#            'relayIsPwm' : ord(data[7]),
+#            'pwmIsFast' : ord(data[8]),
+#            'pwmPercentages' : [ ord(data[9]), ord(data[10]), ord(data[11]), ord(data[12]), ord(data[13]), ord(data[14]) ],
+#            'inputVoltage' : float(ord(data[15])/10.0),
+#            'outputCurrents' : [ float(ord(data[16])/10.0), float(ord(data[17])/10.0), float(ord(data[18])/10.0), float(ord(data[19])/10.0), float(ord(data[20])/10.0), float(ord(data[21])/10.0) ],
          }
+    else:
+        raise IOError("No data received")
+
+def status():
+    data = query(0x04)
+    if data and len(data) > 0:
+        return {
+            'relayIsOpen' : ord(data[0]),
+            'fuseIsBlown' : ord(data[1]),
+            'pwmPercentages' : [ ord(data[2]), ord(data[3]), ord(data[4]), ord(data[5]), ord(data[6]), ord(data[7]) ],
+            'inputVoltage' : float(ord(data[8])/10.0),
+            'outputCurrents' : [ float(ord(data[9])/10.0), float(ord(data[10])/10.0), float(ord(data[11])/10.0), float(ord(data[12])/10.0), float(ord(data[13])/10.0), float(ord(data[14])/10.0) ],
+         }
+    else:
+        raise IOError("No data received")
 
 if __name__ == '__main__':
+    settings = factorysettings()
     data = status()
-    keys = data.keys()
-    keys.sort()
-    print 'KomaHub v%s.%s, serial #%05d' % (data['firmwareMajor'], data['firmwareMinor'], data['serial'])
+    print 'KomaHub v%s.%s, serial #%05d' % (settings['firmwareMajor'], settings['firmwareMinor'], settings['serial'])
     print 'Input Voltage: %1.1fV' % data['inputVoltage']
-    for i in range(0, data['numberOfOutputs']):
-        print 'Output %d: %s%s%s%s%s %1.1fA' % (i+1, 
-            ('ACTIVE' if (data['relayIsOpen'] & (1 << i)) != 0 else '______'), 
-            (' FUSE' if (data['fuseIsBlown'] & (1 << i)) != 0 else ''), 
-            (' PWM' if (data['relayIsPwm'] & (1 << i)) != 0 else ''), 
-            ('FAST' if (data['pwmIsFast'] & (1 << i)) != 0 else ''), 
-            (' %d%%' % data['pwmPercentages'][i] if (data['relayIsPwm'] & (1 << i)) != 0 else ''), 
+    for i in range(0, 6):
+        print 'Output %d: %s%s%s %1.1fA' % (i+1,
+            ('ACTIVE' if (data['relayIsOpen'] & (1 << i)) != 0 else '______'),
+            (' FUSE' if (data['fuseIsBlown'] & (1 << i)) != 0 else ''),
+            (' %d%%' % data['pwmPercentages'][i]),
             data['outputCurrents'][i])
