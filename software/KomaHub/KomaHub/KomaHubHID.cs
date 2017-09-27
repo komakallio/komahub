@@ -1,13 +1,22 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Mighty.HID;
+using System.Runtime.InteropServices;
 
 namespace KomaHub
 {
 
     public class KomaHubHID
     {
+        [DllImport(@"teensyhidlib.dll", CallingConvention = CallingConvention.Cdecl) ]
+        static extern int rawhid_open(int max, int vid, int pid, int usage_page, int usage);
+        [DllImport(@"teensyhidlib.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern int rawhid_recv(int num, [MarshalAs(UnmanagedType.LPArray)]byte[] buf, int len, int timeout);
+        [DllImport(@"teensyhidlib.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern int rawhid_send(int num, [MarshalAs(UnmanagedType.LPArray)]byte[] buf, int len, int timeout);
+        [DllImport(@"teensyhidlib.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern void rawhid_close(int num);
+        
         private const int VENDORID = 0x1209;
         private const int PRODUCTID = 0x4242;
         private const byte KOMAHUB_MAGIC = (byte)'K';
@@ -59,7 +68,6 @@ namespace KomaHub
             public float[] fuseCurrent;
         }
 
-        private HIDDev device;
         private static bool attached;
 
         public KomaHubHID()
@@ -68,44 +76,42 @@ namespace KomaHub
 
         public bool openDevice() 
         {
-            HIDInfo hidInfo = HIDBrowse.Browse().Where(d => d.Vid == VENDORID && d.Pid == PRODUCTID).FirstOrDefault();
-            if (hidInfo == null)
-            {
-                return false;
-            }
+            if (attached)
+                return true;
 
-            device = new HIDDev();
-            bool success = device.Open(hidInfo);
-            if (!success)
-            {
-                return false;
-            }
+            attached = rawhid_open(1, 0x1209, 0x4242, -1, -1) != 0;
+            return attached;
+        }
 
-            return true;
+        public void closeDevice()
+        {
+            if (attached)
+            {
+                rawhid_close(0);
+                attached = false;
+            }
         }
 
         public void setRelay(int output, bool enabled)
         {
-            byte[] report = new byte[65];
-            report[0] = 0;
-            report[1] = KOMAHUB_MAGIC;
-            report[2] = 3;
-            report[3] = Commands.SetRelay;
-            report[4] = (byte)output;
-            report[5] = enabled ? (byte)1 : (byte)0;
-            device.Write(report);
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 3;
+            report[2] = Commands.SetRelay;
+            report[3] = (byte)output;
+            report[4] = enabled ? (byte)1 : (byte)0;
+            rawhid_send(0, report, 64, 100);
         }
 
         public KomahubFactorySettings readFactorySettings()
         {
-            byte[] report = new byte[65];
-            report[0] = 0;
-            report[1] = KOMAHUB_MAGIC;
-            report[2] = 1;
-            report[3] = Commands.GetFactorySettings;
-            device.Write(report);
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 1;
+            report[2] = Commands.GetFactorySettings;
+            rawhid_send(0, report, 64, 100);
 
-            device.Read(report);
+            rawhid_recv(0, report, 64, 100);
             KomahubFactorySettings factorySettings = new KomahubFactorySettings();
             factorySettings.FirmwareVersion = report[0] << 8 + report[1];
             factorySettings.SerialNumber = report[2] << 8 + report[3];
@@ -114,14 +120,13 @@ namespace KomaHub
 
         public KomahubStatus readStatus()
         {
-            byte[] report = new byte[65];
-            report[0] = 0;
-            report[1] = KOMAHUB_MAGIC;
-            report[2] = 1;
-            report[3] = Commands.GetStatus;
-            device.Write(report);
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 1;
+            report[2] = Commands.GetStatus;
+            rawhid_send(0, report, 64, 100);
 
-            device.Read(report);
+            rawhid_recv(0, report, 64, 100);
             KomahubStatus status = new KomahubStatus();
             status.relayIsOpen = new bool[6];
             status.fuseIsBlown = new bool[6];
