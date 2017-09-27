@@ -35,23 +35,23 @@ namespace KomaHub
             this.buttonRelay6 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
+            this.output5Current = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.buttonRelay5 = new System.Windows.Forms.Button();
-            this.label18 = new System.Windows.Forms.Label();
+            this.output4Current = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.buttonRelay4 = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
+            this.output3Current = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.buttonRelay3 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.output2Current = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.buttonRelay2 = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
+            this.output1Current = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.labelInputVoltage = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -77,6 +77,7 @@ namespace KomaHub
             this.firmwareLabel = new System.Windows.Forms.Label();
             this.titlePictureBox = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.output6Current = new System.Windows.Forms.Label();
             this.groupBoxRelayControl.SuspendLayout();
             this.groupBoxSensors.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titlePictureBox)).BeginInit();
@@ -108,26 +109,27 @@ namespace KomaHub
             // 
             // groupBoxRelayControl
             // 
+            this.groupBoxRelayControl.Controls.Add(this.output6Current);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay6);
             this.groupBoxRelayControl.Controls.Add(this.label13);
             this.groupBoxRelayControl.Controls.Add(this.label14);
-            this.groupBoxRelayControl.Controls.Add(this.label15);
+            this.groupBoxRelayControl.Controls.Add(this.output5Current);
             this.groupBoxRelayControl.Controls.Add(this.label16);
             this.groupBoxRelayControl.Controls.Add(this.label17);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay5);
-            this.groupBoxRelayControl.Controls.Add(this.label18);
+            this.groupBoxRelayControl.Controls.Add(this.output4Current);
             this.groupBoxRelayControl.Controls.Add(this.label19);
             this.groupBoxRelayControl.Controls.Add(this.label20);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay4);
-            this.groupBoxRelayControl.Controls.Add(this.label10);
+            this.groupBoxRelayControl.Controls.Add(this.output3Current);
             this.groupBoxRelayControl.Controls.Add(this.label11);
             this.groupBoxRelayControl.Controls.Add(this.label12);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay3);
-            this.groupBoxRelayControl.Controls.Add(this.label2);
+            this.groupBoxRelayControl.Controls.Add(this.output2Current);
             this.groupBoxRelayControl.Controls.Add(this.label8);
             this.groupBoxRelayControl.Controls.Add(this.label9);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay2);
-            this.groupBoxRelayControl.Controls.Add(this.label7);
+            this.groupBoxRelayControl.Controls.Add(this.output1Current);
             this.groupBoxRelayControl.Controls.Add(this.label6);
             this.groupBoxRelayControl.Controls.Add(this.label1);
             this.groupBoxRelayControl.Controls.Add(this.buttonRelay1);
@@ -151,6 +153,7 @@ namespace KomaHub
             this.buttonRelay6.TabIndex = 37;
             this.buttonRelay6.Text = "Reset";
             this.buttonRelay6.UseVisualStyleBackColor = true;
+            this.buttonRelay6.Click += new System.EventHandler(this.buttonRelay6_Click);
             // 
             // label13
             // 
@@ -174,17 +177,17 @@ namespace KomaHub
             this.label14.TabIndex = 35;
             this.label14.Text = "Disabled";
             // 
-            // label15
+            // output5Current
             // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.ForeColor = System.Drawing.Color.OrangeRed;
-            this.label15.Location = new System.Drawing.Point(303, 251);
-            this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(75, 25);
-            this.label15.TabIndex = 33;
-            this.label15.Text = "OVER";
+            this.output5Current.AutoSize = true;
+            this.output5Current.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output5Current.ForeColor = System.Drawing.Color.OrangeRed;
+            this.output5Current.Location = new System.Drawing.Point(303, 251);
+            this.output5Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output5Current.Name = "output5Current";
+            this.output5Current.Size = new System.Drawing.Size(75, 25);
+            this.output5Current.TabIndex = 33;
+            this.output5Current.Text = "OVER";
             // 
             // label16
             // 
@@ -220,16 +223,17 @@ namespace KomaHub
             this.buttonRelay5.TabIndex = 30;
             this.buttonRelay5.Text = "Reset";
             this.buttonRelay5.UseVisualStyleBackColor = true;
+            this.buttonRelay5.Click += new System.EventHandler(this.buttonRelay5_Click);
             // 
-            // label18
+            // output4Current
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(303, 199);
-            this.label18.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(62, 25);
-            this.label18.TabIndex = 29;
-            this.label18.Text = "1,5 A";
+            this.output4Current.AutoSize = true;
+            this.output4Current.Location = new System.Drawing.Point(303, 199);
+            this.output4Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output4Current.Name = "output4Current";
+            this.output4Current.Size = new System.Drawing.Size(62, 25);
+            this.output4Current.TabIndex = 29;
+            this.output4Current.Text = "1,5 A";
             // 
             // label19
             // 
@@ -263,16 +267,17 @@ namespace KomaHub
             this.buttonRelay4.TabIndex = 26;
             this.buttonRelay4.Text = "On";
             this.buttonRelay4.UseVisualStyleBackColor = true;
+            this.buttonRelay4.Click += new System.EventHandler(this.buttonRelay4_Click);
             // 
-            // label10
+            // output3Current
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(303, 148);
-            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(62, 25);
-            this.label10.TabIndex = 25;
-            this.label10.Text = "0,0 A";
+            this.output3Current.AutoSize = true;
+            this.output3Current.Location = new System.Drawing.Point(303, 148);
+            this.output3Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output3Current.Name = "output3Current";
+            this.output3Current.Size = new System.Drawing.Size(62, 25);
+            this.output3Current.TabIndex = 25;
+            this.output3Current.Text = "0,0 A";
             // 
             // label11
             // 
@@ -306,16 +311,17 @@ namespace KomaHub
             this.buttonRelay3.TabIndex = 22;
             this.buttonRelay3.Text = "25 %";
             this.buttonRelay3.UseVisualStyleBackColor = true;
+            this.buttonRelay3.Click += new System.EventHandler(this.buttonRelay3_Click);
             // 
-            // label2
+            // output2Current
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(303, 96);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 25);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "0,3 A";
+            this.output2Current.AutoSize = true;
+            this.output2Current.Location = new System.Drawing.Point(303, 96);
+            this.output2Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output2Current.Name = "output2Current";
+            this.output2Current.Size = new System.Drawing.Size(62, 25);
+            this.output2Current.TabIndex = 21;
+            this.output2Current.Text = "0,3 A";
             // 
             // label8
             // 
@@ -351,15 +357,15 @@ namespace KomaHub
             this.buttonRelay2.UseVisualStyleBackColor = true;
             this.buttonRelay2.Click += new System.EventHandler(this.buttonRelay2On_Click);
             // 
-            // label7
+            // output1Current
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(303, 44);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 25);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "1,5 A";
+            this.output1Current.AutoSize = true;
+            this.output1Current.Location = new System.Drawing.Point(303, 44);
+            this.output1Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output1Current.Name = "output1Current";
+            this.output1Current.Size = new System.Drawing.Size(62, 25);
+            this.output1Current.TabIndex = 17;
+            this.output1Current.Text = "1,5 A";
             // 
             // label6
             // 
@@ -636,20 +642,31 @@ namespace KomaHub
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(594, 845);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(594, 800);
             this.flowLayoutPanel1.TabIndex = 41;
+            // 
+            // output6Current
+            // 
+            this.output6Current.AutoSize = true;
+            this.output6Current.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output6Current.ForeColor = System.Drawing.Color.OrangeRed;
+            this.output6Current.Location = new System.Drawing.Point(303, 303);
+            this.output6Current.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.output6Current.Name = "output6Current";
+            this.output6Current.Size = new System.Drawing.Size(75, 25);
+            this.output6Current.TabIndex = 38;
+            this.output6Current.Text = "OVER";
             // 
             // KomaHubForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(594, 845);
+            this.ClientSize = new System.Drawing.Size(594, 800);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "KomaHubForm";
             this.Text = "KomaHub";
-            this.Load += new System.EventHandler(this.KomaHubForm_Load);
             this.groupBoxRelayControl.ResumeLayout(false);
             this.groupBoxRelayControl.PerformLayout();
             this.groupBoxSensors.ResumeLayout(false);
@@ -685,23 +702,23 @@ namespace KomaHub
         private System.Windows.Forms.Label labelExternalTemperature;
         private System.IO.Ports.SerialPort serialPort;
         private System.Windows.Forms.Button buttonSettings;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label output1Current;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label output3Current;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button buttonRelay3;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label output2Current;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button buttonRelay2;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label output5Current;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Button buttonRelay5;
-        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label output4Current;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Button buttonRelay4;
@@ -710,6 +727,7 @@ namespace KomaHub
         private System.Windows.Forms.Label firmwareLabel;
         private System.Windows.Forms.PictureBox titlePictureBox;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label output6Current;
     }
 }
 

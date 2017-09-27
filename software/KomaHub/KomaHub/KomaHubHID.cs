@@ -33,42 +33,7 @@ namespace KomaHub
             public const byte ConfigureOutput = 0x13;
         }
 
-        public class KomahubFactorySettings
-        {
-            public int FirmwareVersion;
-            public int SerialNumber;
-            public bool featureTempProbe;
-            public bool featureSkyQuality;
-            public bool featureAmbientPTH;
-            public bool featureSkyTemperature;
-        }
-
-        public class KomahubStatus {
-            public bool[] relayIsOpen;
-            public bool[] fuseIsBlown;
-            public byte[] pwmDuty;
-            public float inputVoltage;
-            public float[] outputCurrent;
-        }
-
-        public class KomahubOutputSettings
-        {
-            public enum OutputType
-            {
-                OFF = 0,
-                DC = 1,
-                PWM = 2,
-                PWM_PID_HEAT = 3,
-                PWM_PID_COOL = 4,
-                PWM_FAST = 5
-            }
-
-            public OutputType[] outputTypes;
-            public String[] outputNames;
-            public float[] fuseCurrent;
-        }
-
-        private static bool attached;
+        public bool Connected { get; set; }
 
         public KomaHubHID()
         {
@@ -76,19 +41,19 @@ namespace KomaHub
 
         public bool openDevice() 
         {
-            if (attached)
+            if (Connected)
                 return true;
 
-            attached = rawhid_open(1, 0x1209, 0x4242, -1, -1) != 0;
-            return attached;
+            Connected = rawhid_open(1, 0x1209, 0x4242, -1, -1) != 0;
+            return Connected;
         }
 
         public void closeDevice()
         {
-            if (attached)
+            if (Connected)
             {
                 rawhid_close(0);
-                attached = false;
+                Connected = false;
             }
         }
 
@@ -113,8 +78,8 @@ namespace KomaHub
 
             rawhid_recv(0, report, 64, 100);
             KomahubFactorySettings factorySettings = new KomahubFactorySettings();
-            factorySettings.FirmwareVersion = report[0] << 8 + report[1];
-            factorySettings.SerialNumber = report[2] << 8 + report[3];
+            factorySettings.FirmwareVersion = (report[0] << 8) + report[1];
+            factorySettings.SerialNumber = (report[2] << 8) + report[3];
             return factorySettings;
         }
 
@@ -134,14 +99,19 @@ namespace KomaHub
             status.outputCurrent = new float[6];
             for (int output = 0; output < 6; output++) 
             {
-                status.relayIsOpen[output] = (report[5] & (1 << output)) != 0;
-                status.fuseIsBlown[output] = (report[6] & (1 << output)) != 0;
-                status.pwmDuty[output] = report[7 + output];
-                status.outputCurrent[output] = report[7 + 6 + 1 + output] / 10.0f;
+                status.relayIsOpen[output] = (report[0] & (1 << output)) != 0;
+                status.fuseIsBlown[output] = (report[1] & (1 << output)) != 0;
+                status.pwmDuty[output] = report[2 + output];
+                status.outputCurrent[output] = report[2 + 6 + 1 + output] / 10.0f;
             }
-            status.inputVoltage = report[7 + 6] / 10.0f;
+            status.inputVoltage = report[2 + 6] / 10.0f;
 
             return status;
+        }
+
+        public KomahubOutput readOutput(int n)
+        {
+            return new KomahubOutput();
         }
     }
 }

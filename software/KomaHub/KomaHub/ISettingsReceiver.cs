@@ -8,6 +8,6 @@ namespace KomaHub
 {
     public interface ISettingsReceiver
     {
-        void ApplySettings(float voltageRatio, float sqmOffset);
+        void ApplySettings(UIState uiState);
     }
 }

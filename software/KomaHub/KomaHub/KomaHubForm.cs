@@ -18,6 +18,7 @@ namespace KomaHub
     {
         private UIState uiState = new UIState();
         private BackgroundWorker backgroundWorker = new BackgroundWorker();
+        private BackgroundWorker statusWorker = new BackgroundWorker();
         private KomaHubHID komaHub = new KomaHubHID();
         private float voltageResistorRatio = 6.0f;
         private float sqmOffset = 21;
@@ -26,15 +27,15 @@ namespace KomaHub
         {
             InitializeComponent();
 
-            var firmwarePos = titlePictureBox.PointToClient(this.PointToScreen(firmwareLabel.Location));
+            var firmwarePos = new Point(204, 48);
             firmwareLabel.Parent = titlePictureBox;
             firmwareLabel.Location = firmwarePos;
+            firmwareLabel.BringToFront();
 
-            var serialPos = titlePictureBox.PointToClient(this.PointToScreen(serialLabel.Location));
+            var serialPos = new Point(207, 62);
             serialLabel.Parent = titlePictureBox;
             serialLabel.Location = serialPos;
-
-
+            serialLabel.BringToFront();
 
             uiState.Connected = false;
 
@@ -55,6 +56,10 @@ namespace KomaHub
             backgroundWorker.DoWork += DetectDevice;
             backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.RunWorkerAsync();
+
+            statusWorker = new BackgroundWorker();
+            statusWorker.DoWork += UpdateStatus;
+            statusWorker.RunWorkerAsync();
         }
 
         private void DetectDevice(object sender, DoWorkEventArgs args)
@@ -65,10 +70,10 @@ namespace KomaHub
                 found = komaHub.openDevice();
                 if (found)
                 {
-//                    var factorySettings = komaHub.readFactorySettings();
-//                    serialLabel.Text = String.Format("Device #{0,3,D3}", factorySettings.SerialNumber);
+                    var factorySettings = komaHub.readFactorySettings();
+                    serialLabel.Text = String.Format("S/N #{0,4:D4}", factorySettings.SerialNumber);
                     serialLabel.Visible = true;
-//                    firmwareLabel.Text = String.Format("Firmware v{0}.{1}", factorySettings.FirmwareVersion >> 8, factorySettings.FirmwareVersion & 0xFF);
+                    firmwareLabel.Text = String.Format("Firmware v{0}.{1}", factorySettings.FirmwareVersion >> 8, factorySettings.FirmwareVersion & 0xFF);
                     firmwareLabel.Visible = true;
                     break;
                 }
@@ -86,80 +91,87 @@ namespace KomaHub
             });
         }
 
-        private void PollStatus(object sender, DoWorkEventArgs args)
+        private void UpdateStatus(object sender, DoWorkEventArgs args)
         {
             while (true)
             {
-                try
+                if (komaHub.Connected)
                 {
-//                    komaHubComm.Send(serialPort, new KomaHubComm.Command("STATUS", null));
+                    uiState.Status = komaHub.readStatus();
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        Update(uiState);
+                    });
                 }
-                catch (IOException)
-                {
-                    return;
-                }
-                Thread.Sleep(5000);
+
+                Thread.Sleep(1000);
             }
         }
 
-        public void UpdateRelayButtons(UIState.Output output, Button button)
+        public void UpdateRelayUI(int output, Label currentLabel, Button button)
         {
-            button.Visible = output.Enabled;
+            button.Visible = uiState.Outputs[output].type != KomahubOutput.OutputType.OFF;
             button.Enabled = uiState.Connected;
 
             if (!uiState.Connected)
                 return;
 
-            if (output.isOverload) 
+            if (uiState.Status.fuseIsBlown[output]) 
             {
                 button.BackColor = Color.Salmon;
                 button.Text = "Reset";
+
+                currentLabel.Text = "FUSE";
+                currentLabel.ForeColor = Color.OrangeRed;
             } 
             else 
             {
-                button.BackColor = output.Active ? Color.LimeGreen : Color.Salmon;
-                button.Text = output.Active ? "On" : "Off";
+                button.BackColor = uiState.Status.relayIsOpen[output] ? Color.LimeGreen : Color.Salmon;
+                button.Text = uiState.Status.relayIsOpen[output] ? "On" : "Off";
+
+                currentLabel.Text = String.Format("{0,3:0.0} A", uiState.Status.outputCurrent[output]);
+                currentLabel.ForeColor = Color.Black;
             }
         }
 
         public void Update(UIState uiState)
         {
-//            this.groupBoxRelayControl.Enabled = uiState.Connected;
+            this.groupBoxRelayControl.Enabled = uiState.Connected;
             this.groupBoxSensors.Enabled = true;
 
-            UpdateRelayButtons(uiState.Outputs[0], this.buttonRelay1);
-            UpdateRelayButtons(uiState.Outputs[1], this.buttonRelay2);
-            UpdateRelayButtons(uiState.Outputs[2], this.buttonRelay3);
-            UpdateRelayButtons(uiState.Outputs[3], this.buttonRelay4);
-            UpdateRelayButtons(uiState.Outputs[4], this.buttonRelay5);
-            UpdateRelayButtons(uiState.Outputs[5], this.buttonRelay6);
+            UpdateRelayUI(0, this.output1Current, this.buttonRelay1);
+            UpdateRelayUI(1, this.output2Current, this.buttonRelay2);
+            UpdateRelayUI(2, this.output3Current, this.buttonRelay3);
+            UpdateRelayUI(3, this.output4Current, this.buttonRelay4);
+            UpdateRelayUI(4, this.output5Current, this.buttonRelay5);
+            UpdateRelayUI(5, this.output6Current, this.buttonRelay6);
             
-            this.labelTemperature.Text = string.Format("{0:F1} °C", uiState.Temperature);
-            this.labelTemperature.Enabled = uiState.EnabledSensors.Contains("TA");
-            this.labelTemperatureTitle.Enabled = uiState.EnabledSensors.Contains("TA");
-            this.labelHumidity.Text = string.Format("{0:F1} %", uiState.Humidity);
-            this.labelHumidity.Enabled = uiState.EnabledSensors.Contains("RH");
-            this.labelHumidityTitle.Enabled = uiState.EnabledSensors.Contains("RH");
-            this.labelPressure.Text = string.Format("{0:F0} hPa", Math.Round(uiState.Pressure));
-            this.labelPressure.Enabled = uiState.EnabledSensors.Contains("P");
-            this.labelPressureTitle.Enabled = uiState.EnabledSensors.Contains("P");
-            this.labelExternalTemperature.Text = string.Format("{0:F1} °C", uiState.ExternalTemperature);
-            this.labelExternalTemperature.Enabled = uiState.EnabledSensors.Contains("TDS");
-            this.labelExternalTemperatureTitle.Enabled = uiState.EnabledSensors.Contains("TDS");
+            this.labelTemperature.Text = string.Format("{0:F1} °C", uiState.Status.temperature);
+            this.labelTemperature.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelTemperatureTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelHumidity.Text = string.Format("{0:F1} %", uiState.Status.humidity);
+            this.labelHumidity.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelHumidityTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelPressure.Text = string.Format("{0:F0} hPa", Math.Round(uiState.Status.pressure));
+            this.labelPressure.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelPressureTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
+            this.labelExternalTemperature.Text = string.Format("{0:F1} °C", uiState.Status.externalTemperature);
+            this.labelExternalTemperature.Enabled = uiState.FactorySettings.featureTempProbe;
+            this.labelExternalTemperatureTitle.Enabled = uiState.FactorySettings.featureTempProbe;
 
-            this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.SkyTemperature);
-            this.labelSkyTemperature.Enabled = uiState.EnabledSensors.Contains("TMO");
-            this.labelSkyTemperatureTitle.Enabled = uiState.EnabledSensors.Contains("TMO");
-            this.labelSkyTemperatureDelta.Text = string.Format("{0:F1} °C", uiState.SkyTemperatureDelta);
-            this.labelSkyTemperatureDelta.Enabled = uiState.EnabledSensors.Contains("TMA") && uiState.EnabledSensors.Contains("TMO");
-            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.EnabledSensors.Contains("TMA") && uiState.EnabledSensors.Contains("TMO");
+            this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature);
+            this.labelSkyTemperature.Enabled = uiState.FactorySettings.featureSkyTemperature;
+            this.labelSkyTemperatureTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
+            this.labelSkyTemperatureDelta.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperatureAmbient - uiState.Status.skyTemperature);
+            this.labelSkyTemperatureDelta.Enabled = uiState.FactorySettings.featureSkyTemperature;
+            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
 
-            this.labelSQM.Text = string.Format("{0:F2}", uiState.SQM);
-            this.labelSQM.Enabled = uiState.EnabledSensors.Contains("SQM");
-            this.labelSQMTitle.Enabled = uiState.EnabledSensors.Contains("SQM");
+            this.labelSQM.Text = string.Format("{0:F2}", uiState.Status.skyQuality);
+            this.labelSQM.Enabled = uiState.FactorySettings.featureSkyQuality;
+            this.labelSQMTitle.Enabled = uiState.FactorySettings.featureSkyQuality;
 
-            this.labelInputVoltage.Text = string.Format("{0:F2} V", uiState.InputVoltage);
-            this.labelInputVoltage.ForeColor = uiState.InputVoltage < 12.0 || uiState.InputVoltage >= 14.0 ? Color.Red : Color.Black;
+            this.labelInputVoltage.Text = string.Format("{0:F2} V", uiState.Status.inputVoltage);
+            this.labelInputVoltage.ForeColor = uiState.Status.inputVoltage < 12.0 || uiState.Status.inputVoltage >= 14.0 ? Color.Red : Color.Black;
 
             this.labelStatusText.Text = uiState.StatusText;
         }
@@ -169,51 +181,56 @@ namespace KomaHub
             return -2.5f * (float)Math.Log10(rawSqmValue) + offset;
         }
 
-        private float current(float rawValue)
+        public void ApplySettings(UIState uiState)
         {
-            const float REFERENCE_VOLTAGE = 4.096f;
-            const float SYSTEM_VOLTAGE = 5.0f;
-            const float ADC_MAX = 1024.0f;
-            const float SENSITIVITY_mV_PER_A = 100.0f;
-            const float SENSITIVITY_V_PER_A = 1000.0f / SENSITIVITY_mV_PER_A;
-
-            float volts = REFERENCE_VOLTAGE * rawValue / ADC_MAX;
-            float zero = SYSTEM_VOLTAGE / 2.0f;
-            return (volts - zero) * SENSITIVITY_V_PER_A;
+            this.uiState = uiState;
+            Update(uiState);
         }
 
-        public void ApplySettings(float voltageResistorRatio, float sqmOffset)
+        private void toggleRelay(int n)
         {
-            this.voltageResistorRatio = voltageResistorRatio;
-            this.sqmOffset = sqmOffset;
-            Update(uiState);
-
-            Properties.Settings.Default["voltageResistorRatio"] = voltageResistorRatio;
-            Properties.Settings.Default["sqmOffset"] = sqmOffset;
-            Properties.Settings.Default.Save();
+            uiState.Status.relayIsOpen[n] = !uiState.Status.relayIsOpen[n];
+            komaHub.setRelay(n, uiState.Status.relayIsOpen[n]);
         }
 
         private void buttonRelay1On_Click(object sender, EventArgs e)
         {
-            uiState.Outputs[0].Active = !uiState.Outputs[0].Active;
-            komaHub.setRelay(0, uiState.Outputs[0].Active);
+            toggleRelay(0);
             Update(uiState);
         }
 
         private void buttonRelay2On_Click(object sender, EventArgs e)
         {
-            uiState.Outputs[1].Active = !uiState.Outputs[1].Active;
-            komaHub.setRelay(1, uiState.Outputs[1].Active);
+            toggleRelay(1);
             Update(uiState);
         }
 
-        private void buttonSettings_Click(object sender, EventArgs e)
+        private void buttonRelay3_Click(object sender, EventArgs e)
         {
+            toggleRelay(2);
+            Update(uiState);
         }
 
-        private void KomaHubForm_Load(object sender, EventArgs e)
+        private void buttonRelay4_Click(object sender, EventArgs e)
         {
+            toggleRelay(3);
+            Update(uiState);
+        }
 
+        private void buttonRelay5_Click(object sender, EventArgs e)
+        {
+            toggleRelay(4);
+            Update(uiState);
+        }
+
+        private void buttonRelay6_Click(object sender, EventArgs e)
+        {
+            toggleRelay(5);
+            Update(uiState);
+        }
+        private void buttonSettings_Click(object sender, EventArgs e)
+        {
+            new SettingsForm(this, uiState).Show();
         }
     }
 }
