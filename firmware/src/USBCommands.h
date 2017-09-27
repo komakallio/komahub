@@ -27,7 +27,9 @@
 enum USBCommand {
     END = 0x00,
     IDENTIFY = 0x01,
-    STATUS = 0x02,
+    GETFACTORYSETTINGS = 0x02,
+    GETOUTPUTSETTINGS = 0x03,
+    GETSTATUS = 0x04,
     SETRELAY = 0x10,
     SETPWMDUTY = 0x11,
     RESETFUSE = 0x12,
@@ -39,20 +41,16 @@ enum USBCommand {
     FACTORYRESET = 0xFA
 };
 
-enum OutputType {
-    DC = 0,
-    SLOWPWM = 1,
-    FASTPWM = 2
-};
-
 struct FactoryResetCommand {
     uint16_t serial;
-    uint8_t numberOfOutputs;
     uint16_t r6ohms;
     uint16_t r7ohms;
+};
+
+struct UpdateSettingsCommand {
     uint8_t features;
-    uint8_t sqmZeroPoint;
-    uint8_t fuseSpeed;
+    uint8_t sqmzeropoint;
+    uint8_t fusespeed;
 };
 
 struct SetRelayCommand {
@@ -71,8 +69,9 @@ struct ResetFuseCommand {
 
 struct ConfigureOutputCommand {
     uint8_t outputNumber;
-    uint8_t active;
     uint8_t outputType;  
+    uint8_t fuseCurrent;
+    char name[16];
 };
 
 

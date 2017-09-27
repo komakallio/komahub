@@ -64,18 +64,40 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 return;
             }
 
-            case STATUS: {
+            case GETFACTORYSETTINGS: {
                 uint8_t *dst = &usbSendBuffer[0];
                 *dst++ = KOMAHUB_FIRMWARE_VERSION_MAJOR;
                 *dst++ = KOMAHUB_FIRMWARE_VERSION_MINOR;
-                *dst++ = hubConfiguration->getFactoryConfig().numberOfOutputs;
-                *dst++ = (hubConfiguration->getFactoryConfig().serial & 0xFF00) >> 8;
-                *dst++ = hubConfiguration->getFactoryConfig().serial & 0xFF;
+                const HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
+
+                *dst++ = (factoryConfig.serial & 0xFF00) >> 8;
+                *dst++ = factoryConfig.serial & 0xFF;
+                *dst++ = factoryConfig.fuseSpeed;
+                *dst++ = factoryConfig.sqmZeroPoint;
+                *dst++ = (uint8_t)(
+                    (factoryConfig.features.tempprobes ? (1 << 0) : 0) +
+                    (factoryConfig.features.skyquality ? (1 << 1) : 0) +
+                    (factoryConfig.features.ambientpth ? (1 << 2) : 0) +
+                    (factoryConfig.features.skytemp ? (1 << 3) : 0));
+                RawHID.send(usbSendBuffer, 1000);
+                break;
+            }
+
+            case GETOUTPUTSETTINGS: {
+                uint8_t *dst = &usbSendBuffer[0];
+                const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
+                for (unsigned int i = 0; i < sizeof(HubConfiguration::OutputSettings); i++) {
+                    *dst++ = ((uint8_t*)&outputSettings)[i];
+                }
+                RawHID.send(usbSendBuffer, 1000);
+                break;
+            }
+
+            case GETSTATUS: {
+                uint8_t *dst = &usbSendBuffer[0];
                 const HubConfiguration::State& state = hubConfiguration->getState();
                 *dst++ = state.relayIsOpenBits;
                 *dst++ = state.fuseIsBlownBits;
-                *dst++ = state.relayIsPwmBits;
-                *dst++ = state.pwmIsFastBits;
                 for (int i = 0; i < 6; i++) {
                     *dst++ = state.pwmPercentages[i];
                 }
@@ -85,19 +107,13 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 for (int i = 0; i < 6; i++) {
                     *dst++ = (uint8_t)(VoltageMonitor::getOutputPower(i) * 10);
                 }
-                uint16_t averages[8];
-                AnalogInput::getAverageValues(averages);
-                for (int i = 0; i < 7; i++) {
-                    *dst++ = averages[i] >> 8;
-                    *dst++ = averages[i] & 0xFF;
-                }
-
                 // temperatures
                 // weather
                 // sqm
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
+
             case DUMPFACTORY: {
                 uint8_t *dst = usbSendBuffer;
                 for (unsigned int i = 0; i < sizeof(HubConfiguration::FactoryConfig); i++)
@@ -128,7 +144,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 }
 
                 FactoryResetCommand* cmd = (FactoryResetCommand*)&data[pos];
-                USB::hubConfiguration->factoryReset(cmd->serial, cmd->numberOfOutputs, cmd->r6ohms, cmd->r7ohms, cmd->features, cmd->sqmZeroPoint, cmd->fuseSpeed);
+                USB::hubConfiguration->factoryReset(cmd->serial, cmd->r6ohms, cmd->r7ohms);
                 pos += sizeof(FactoryResetCommand);
                 break;
             }
@@ -178,14 +194,10 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                     pos += sizeof(ConfigureOutputCommand);
                     continue;
                 }
-                HubConfiguration::State& state = hubConfiguration->getState();
+                HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
 
                 ConfigureOutputCommand* cmd = (ConfigureOutputCommand*)&data[pos];
-                if (cmd->outputType == DC) {
-                    state.relayIsPwmBits &= !(1 << cmd->outputNumber);
-                } else {
-                    state.relayIsPwmBits |= (1 << cmd->outputNumber);
-                }
+                outputSettings.outputs[cmd->outputNumber].type.type = cmd->outputType;
                 pos += sizeof(ConfigureOutputCommand);
                 break;
             }

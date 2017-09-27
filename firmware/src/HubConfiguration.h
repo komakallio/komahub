@@ -24,46 +24,55 @@
 #ifndef HUBCONFIGURATION_H
 #define HUBCONFIGURATION_H
 
+enum OutputType {
+    OFF = 0,
+    DC = 1,
+    PWM = 2,
+    PWM_PID_HEAT = 3,
+    PWM_PID_COOL = 4,
+    PWM_FAST = 5
+};
+
 class HubConfiguration {
 public:
     struct FactoryConfig {
         char komahub[8];
         uint16_t serial;
-        uint8_t numberOfOutputs;
         float r6r7divisor;
         uint8_t fuseSpeed;
         uint8_t sqmZeroPoint;
         
         struct Features {
-            uint8_t onewire:1;
-            uint8_t sqm:1;
-            uint8_t bme280:1;
-            uint8_t reserved:5;
+            uint8_t tempprobes:1;
+            uint8_t skyquality:1;
+            uint8_t ambientpth:1;
+            uint8_t skytemp:1;
+            uint8_t reserved:4;
         } features;
-        uint8_t reserved[12];
-        // 32 bytes
+        // max 32 bytes
     };
 
     struct Output {
-        char name[15];
+        char name[16];
         uint8_t fuseCurrent;
-        // 16 bytes
+        struct Type {
+            uint8_t type:4;
+            uint8_t pidSensor:2;
+        } type;
+        // 18 bytes
     };
 
     struct OutputSettings {
         Output outputs[6];
-        char reserved[16];
-        // 128 bytes
+        // max 128 bytes
     };
 
     struct State {
         uint8_t counter;
-        uint8_t relayIsPwmBits;
-        uint8_t pwmIsFastBits;
         uint8_t relayIsOpenBits;
         uint8_t fuseIsBlownBits;
         uint8_t pwmPercentages[6];
-        // 11 bytes
+        // 9 bytes
     };
 
 public:
@@ -71,7 +80,7 @@ public:
     void loadStoredConfiguration();
     void saveState();
     void saveOutputConfiguration();
-    void factoryReset(int serialNumber, int numberOfOutputs, int r6ohms, int r7ohms, uint8_t features, uint8_t sqmZeroPoint, uint8_t fuseSpeed);
+    void factoryReset(int serialNumber, int r6ohms, int r7ohms);
 
     HubConfiguration::FactoryConfig& getFactoryConfig();
     HubConfiguration::OutputSettings& getOutputSettings();

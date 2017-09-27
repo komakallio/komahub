@@ -30,7 +30,7 @@
 #define FACTORYCONFIG_OFFSET 0
 #define FACTORYCONFIG_RESERVED_SIZE 32
 #define OUTPUTSETTINGS_OFFSET (FACTORYCONFIG_OFFSET + FACTORYCONFIG_RESERVED_SIZE)
-#define OUTPUTSETTINGS_RESERVED_SIZE (16*8)
+#define OUTPUTSETTINGS_RESERVED_SIZE 128
 #define STATE_OFFSET (OUTPUTSETTINGS_OFFSET + OUTPUTSETTINGS_RESERVED_SIZE)
 #define MAX_STATE_INDEX ((EEPROM_SIZE-FACTORYCONFIG_RESERVED_SIZE-OUTPUTSETTINGS_RESERVED_SIZE)/sizeof(State))
 
@@ -94,16 +94,16 @@ int HubConfiguration::findLatestStateIndex() {
     }
 }
 
-void HubConfiguration::factoryReset(int serialNumber, int numberOfOutputs, int r6ohms, int r7ohms, uint8_t features, uint8_t sqmZeroPoint, uint8_t fuseSpeed) {
+void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms) {
     resetConfiguration();
     this->factoryConfig.serial = serialNumber;
-    this->factoryConfig.numberOfOutputs = numberOfOutputs;
     this->factoryConfig.r6r7divisor = r6ohms / (float)r7ohms;
-    this->factoryConfig.features.onewire = (features & 0x01) != 0;
-    this->factoryConfig.features.sqm = (features & 0x02) != 0;
-    this->factoryConfig.features.bme280 = (features & 0x04) != 0;
-    this->factoryConfig.sqmZeroPoint = sqmZeroPoint;
-    this->factoryConfig.fuseSpeed = fuseSpeed;
+    this->factoryConfig.features.tempprobes = 0;
+    this->factoryConfig.features.skyquality = 0;
+    this->factoryConfig.features.ambientpth = 0;
+    this->factoryConfig.features.skytemp = 0;
+    this->factoryConfig.sqmZeroPoint = 21;
+    this->factoryConfig.fuseSpeed = 100;
     initEEPROM(this->factoryConfig, this->outputSettings, this->state);
 }
 
@@ -111,7 +111,6 @@ void HubConfiguration::resetConfiguration() {
     memset(&this->factoryConfig, 0, sizeof(FactoryConfig));
     memcpy(&this->factoryConfig.komahub[0], "KOMAHUB\0", 8);
     this->factoryConfig.serial = 0;
-    this->factoryConfig.numberOfOutputs = 6;
     this->factoryConfig.r6r7divisor = 6;
     this->factoryConfig.fuseSpeed = 10;
 
@@ -119,6 +118,8 @@ void HubConfiguration::resetConfiguration() {
     for (int i = 0; i < 6; i++) {
         strncpy(this->outputSettings.outputs[i].name, (String("Output ") + String(i+1)).c_str(), 16);
         this->outputSettings.outputs[i].fuseCurrent = 50; // 5 amps
+        this->outputSettings.outputs[i].type.type = DC;
+        this->outputSettings.outputs[i].type.pidSensor = 0;
     }
 
     memset(&this->state, 0, sizeof(State));
