@@ -84,11 +84,20 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case GETOUTPUTSETTINGS: {
+                if (cmdlength-1 < (uint8_t)sizeof(GetOutputSettingsCommand)) {
+                    pos += sizeof(GetOutputSettingsCommand);
+                    continue;
+                }
+                GetOutputSettingsCommand* cmd = (GetOutputSettingsCommand*)&data[pos];
+                
                 uint8_t *dst = &usbSendBuffer[0];
                 const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
-                for (unsigned int i = 0; i < sizeof(HubConfiguration::OutputSettings); i++) {
-                    *dst++ = ((uint8_t*)&outputSettings)[i];
+                
+                for (unsigned int i = 0; i < 16; i++)  {
+                    *dst++ = outputSettings.outputs[cmd->outputNumber].name[i];
                 }
+                *dst++ = outputSettings.outputs[cmd->outputNumber].fuseCurrent;
+                *dst++ = outputSettings.outputs[cmd->outputNumber].type.type;
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
@@ -198,6 +207,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
                 ConfigureOutputCommand* cmd = (ConfigureOutputCommand*)&data[pos];
                 outputSettings.outputs[cmd->outputNumber].type.type = cmd->outputType;
+                outputSettings.outputs[cmd->outputNumber].fuseCurrent = cmd->fuseCurrent;
                 pos += sizeof(ConfigureOutputCommand);
                 break;
             }

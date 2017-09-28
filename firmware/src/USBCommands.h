@@ -47,6 +47,10 @@ struct FactoryResetCommand {
     uint16_t r7ohms;
 };
 
+struct GetOutputSettingsCommand {
+    uint8_t outputNumber;
+};
+
 struct UpdateSettingsCommand {
     uint8_t features;
     uint8_t sqmzeropoint;
