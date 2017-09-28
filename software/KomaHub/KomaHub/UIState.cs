@@ -8,12 +8,9 @@ namespace KomaHub
 {
     public class UIState
     {
-        public bool Connected { get; set; }
         public KomahubFactorySettings FactorySettings { get; set; }
         public KomahubStatus Status { get; set; }
         public KomahubOutput[] Outputs { get; set; }
-
-        public string StatusText { get; set; }
 
         public UIState()
         {
@@ -21,7 +18,10 @@ namespace KomaHub
             Status = new KomahubStatus();
             Outputs = new KomahubOutput[6];
             for (int i = 0; i < 6; i++)
+            {
                 Outputs[i] = new KomahubOutput();
+                Outputs[i].type = KomahubOutput.OutputType.OFF;
+            }
         }
     }
 }

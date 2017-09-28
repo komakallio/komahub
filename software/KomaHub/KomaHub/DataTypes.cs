@@ -10,6 +10,8 @@ namespace KomaHub
     {
         public int FirmwareVersion;
         public int SerialNumber;
+        public int fuseDelay;
+        public float sqmOffset;
         public bool featureTempProbe;
         public bool featureSkyQuality;
         public bool featureAmbientPTH;

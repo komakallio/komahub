@@ -13,14 +13,36 @@ namespace KomaHub
     public partial class SettingsForm : Form
     {
         private ISettingsReceiver settingsReceiver;
-        private UIState uiState;
 
         public SettingsForm(ISettingsReceiver receiver, UIState uiState)
         {
             InitializeComponent();
 
-            this.uiState = uiState;
             this.settingsReceiver = receiver;
+
+            LoadStateFromUI(uiState);
+        }
+
+        private void LoadStateFromUI(UIState uiState)
+        {
+            ComboBox[] outputTypes = { output1Type, output2Type, output3Type, output4Type, output5Type, output6Type };
+            TextBox[] outputNames = { output1Name, output2Name, output3Name, output4Name, output5Name, output6Name };
+            ComboBox[] fuseCurrents = { output1Fuse, output2Fuse, output3Fuse, output4Fuse, output5Fuse, output6Fuse };
+
+            for (int i = 0; i < 6; i++)
+            {
+                outputNames[i].Text = uiState.Outputs[i].name;
+                outputTypes[i].SelectedIndex = (int)uiState.Outputs[i].type;
+                fuseCurrents[i].SelectedIndex = (int)uiState.Outputs[i].fuseCurrent;
+            }
+
+            checkBoxAmbientPTH.Checked = uiState.FactorySettings.featureAmbientPTH;
+            checkBoxExtTemperature.Checked = uiState.FactorySettings.featureTempProbe;
+            checkBoxSkyQuality.Checked = uiState.FactorySettings.featureSkyQuality;
+            checkBoxSkyTemperature.Checked = uiState.FactorySettings.featureSkyTemperature;
+
+            fuseDelay.SelectedIndex = uiState.FactorySettings.fuseDelay / 100;
+            textBoxSQMOffset.Text = uiState.FactorySettings.sqmOffset.ToString();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -32,12 +54,21 @@ namespace KomaHub
         {
             try
             {
+                UIState uiState = new UIState();
                 ComboBox[] outputTypes = { output1Type, output2Type, output3Type, output4Type, output5Type, output6Type };
+                TextBox[] outputNames = { output1Name, output2Name, output3Name, output4Name, output5Name, output6Name };
+                ComboBox[] fuseCurrents = { output1Fuse, output2Fuse, output3Fuse, output4Fuse, output5Fuse, output6Fuse };
+                float[] fuseValues = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
                 for (int i = 0; i < 6; i++)
+                {
+                    uiState.Outputs[i].name = outputNames[i].Text;
+                    uiState.Outputs[i].fuseCurrent = fuseValues[fuseCurrents[i].SelectedIndex];
                     uiState.Outputs[i].type = convertType(outputTypes[i].GetItemText(outputTypes[i].SelectedItem));
+                }
 
-/*                float voltageResistorRatio = float.Parse(this.textBoxVoltageResistorRatio.Text);
-                float sqmOffset = float.Parse(this.textBoxSQMOffset.Text); */
+                uiState.FactorySettings.fuseDelay = this.fuseDelay.SelectedIndex * 100;
+                uiState.FactorySettings.sqmOffset = float.Parse(this.textBoxSQMOffset.Text);
+
                 this.settingsReceiver.ApplySettings(uiState);
             }
             catch (Exception)

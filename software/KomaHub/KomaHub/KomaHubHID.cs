@@ -109,9 +109,53 @@ namespace KomaHub
             return status;
         }
 
-        public KomahubOutput readOutput(int n)
+        public KomahubOutput readOutput(int outputNumber)
         {
-            return new KomahubOutput();
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 1;
+            report[2] = Commands.GetOutputSettings;
+            report[3] = (byte)outputNumber;
+            rawhid_send(0, report, 64, 100);
+
+            byte[] result = new byte[64];
+            rawhid_recv(0, result, 64, 100);
+            KomahubOutput output = new KomahubOutput();
+
+            byte[] name = new byte[16];
+            Array.Copy(result, name, 16);
+            output.name = System.Text.Encoding.UTF8.GetString(name).TrimEnd('\0');
+            output.fuseCurrent = result[16] / 10.0f;
+            output.type = (KomahubOutput.OutputType)result[17];
+            return output;
+        }
+
+        public void configureOutput(int outputNumber, KomahubOutput output)
+        {
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 18;
+            report[2] = Commands.ConfigureOutput;
+            report[3] = (byte)outputNumber;
+            report[4] = (byte)output.type;
+            report[5] = (byte)(output.fuseCurrent*10);
+            byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(output.name);
+            for (int i = 0; i < nameBytes.Length; i++)
+            {
+                report[6 + i] = nameBytes[i];
+            }
+            rawhid_send(0, report, 64, 100);
+        }
+
+        public void setPwmDuty(int outputNumber, int duty)
+        {
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = 2;
+            report[2] = Commands.SetPwmDuty;
+            report[3] = (byte)outputNumber;
+            report[4] = (byte)duty;
+            rawhid_send(0, report, 64, 100);
         }
     }
 }
