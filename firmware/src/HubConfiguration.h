@@ -59,6 +59,7 @@ public:
             uint8_t type:4;
             uint8_t pidSensor:2;
         } type;
+//        uint8_t reserved[3];
         // 18 bytes
     };
 
