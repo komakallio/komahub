@@ -67,9 +67,9 @@ namespace KomaHub
             this.output1Type = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.fuseDelay = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -131,7 +131,7 @@ namespace KomaHub
             // 
             // textBoxSQMOffset
             // 
-            this.textBoxSQMOffset.Location = new System.Drawing.Point(306, 30);
+            this.textBoxSQMOffset.Location = new System.Drawing.Point(306, 36);
             this.textBoxSQMOffset.Name = "textBoxSQMOffset";
             this.textBoxSQMOffset.Size = new System.Drawing.Size(121, 39);
             this.textBoxSQMOffset.TabIndex = 3;
@@ -139,7 +139,7 @@ namespace KomaHub
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 33);
+            this.label2.Location = new System.Drawing.Point(24, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(254, 32);
             this.label2.TabIndex = 2;
@@ -543,10 +543,20 @@ namespace KomaHub
             this.groupBox3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(12, 553);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(563, 129);
+            this.groupBox3.Size = new System.Drawing.Size(563, 143);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Advanced";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.label1.Location = new System.Drawing.Point(444, 43);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(102, 32);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "(def: 21)";
             // 
             // fuseDelay
             // 
@@ -557,7 +567,7 @@ namespace KomaHub
             "300 ms",
             "400 ms",
             "500 ms"});
-            this.fuseDelay.Location = new System.Drawing.Point(306, 76);
+            this.fuseDelay.Location = new System.Drawing.Point(306, 82);
             this.fuseDelay.Name = "fuseDelay";
             this.fuseDelay.Size = new System.Drawing.Size(121, 40);
             this.fuseDelay.TabIndex = 5;
@@ -565,21 +575,11 @@ namespace KomaHub
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(24, 76);
+            this.label13.Location = new System.Drawing.Point(24, 87);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(271, 32);
             this.label13.TabIndex = 4;
             this.label13.Text = "Fuse tripping delay (ms)";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.label1.Location = new System.Drawing.Point(444, 37);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 32);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "(def: 21)";
             // 
             // SettingsForm
             // 

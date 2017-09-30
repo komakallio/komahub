@@ -96,8 +96,8 @@ namespace KomaHub
             // 
             this.buttonRelay1.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay1.Location = new System.Drawing.Point(639, 9);
-            this.buttonRelay1.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay1.Location = new System.Drawing.Point(639, 7);
+            this.buttonRelay1.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay1.Name = "buttonRelay1";
             this.buttonRelay1.Size = new System.Drawing.Size(122, 41);
             this.buttonRelay1.TabIndex = 0;
@@ -335,11 +335,11 @@ namespace KomaHub
             // 
             this.output1Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output1Number.AutoSize = true;
-            this.output1Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output1Number.Location = new System.Drawing.Point(9, 14);
+            this.output1Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output1Number.Location = new System.Drawing.Point(9, 13);
             this.output1Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output1Number.Name = "output1Number";
-            this.output1Number.Size = new System.Drawing.Size(22, 30);
+            this.output1Number.Size = new System.Drawing.Size(29, 32);
             this.output1Number.TabIndex = 16;
             this.output1Number.Text = "1";
             // 
@@ -387,11 +387,11 @@ namespace KomaHub
             // 
             this.output6Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output6Number.AutoSize = true;
-            this.output6Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output6Number.Location = new System.Drawing.Point(9, 262);
+            this.output6Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output6Number.Location = new System.Drawing.Point(9, 261);
             this.output6Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output6Number.Name = "output6Number";
-            this.output6Number.Size = new System.Drawing.Size(25, 30);
+            this.output6Number.Size = new System.Drawing.Size(29, 32);
             this.output6Number.TabIndex = 36;
             this.output6Number.Text = "6";
             // 
@@ -410,11 +410,11 @@ namespace KomaHub
             // 
             this.output5Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output5Number.AutoSize = true;
-            this.output5Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output5Number.Location = new System.Drawing.Point(9, 210);
+            this.output5Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output5Number.Location = new System.Drawing.Point(9, 209);
             this.output5Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output5Number.Name = "output5Number";
-            this.output5Number.Size = new System.Drawing.Size(25, 30);
+            this.output5Number.Size = new System.Drawing.Size(29, 32);
             this.output5Number.TabIndex = 32;
             this.output5Number.Text = "5";
             // 
@@ -443,11 +443,11 @@ namespace KomaHub
             // 
             this.output4Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output4Number.AutoSize = true;
-            this.output4Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output4Number.Location = new System.Drawing.Point(9, 161);
+            this.output4Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output4Number.Location = new System.Drawing.Point(9, 160);
             this.output4Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output4Number.Name = "output4Number";
-            this.output4Number.Size = new System.Drawing.Size(26, 30);
+            this.output4Number.Size = new System.Drawing.Size(29, 32);
             this.output4Number.TabIndex = 28;
             this.output4Number.Text = "4";
             // 
@@ -477,11 +477,11 @@ namespace KomaHub
             // 
             this.output3Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output3Number.AutoSize = true;
-            this.output3Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output3Number.Location = new System.Drawing.Point(9, 112);
+            this.output3Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output3Number.Location = new System.Drawing.Point(9, 111);
             this.output3Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output3Number.Name = "output3Number";
-            this.output3Number.Size = new System.Drawing.Size(25, 30);
+            this.output3Number.Size = new System.Drawing.Size(29, 32);
             this.output3Number.TabIndex = 24;
             this.output3Number.Text = "3";
             // 
@@ -500,11 +500,11 @@ namespace KomaHub
             // 
             this.output2Number.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.output2Number.AutoSize = true;
-            this.output2Number.Font = new System.Drawing.Font("Segoe UI Semibold", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.output2Number.Location = new System.Drawing.Point(9, 63);
+            this.output2Number.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.output2Number.Location = new System.Drawing.Point(9, 62);
             this.output2Number.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.output2Number.Name = "output2Number";
-            this.output2Number.Size = new System.Drawing.Size(25, 30);
+            this.output2Number.Size = new System.Drawing.Size(29, 32);
             this.output2Number.TabIndex = 20;
             this.output2Number.Text = "2";
             // 
@@ -512,8 +512,8 @@ namespace KomaHub
             // 
             this.buttonRelay6.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay6.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay6.Location = new System.Drawing.Point(639, 254);
-            this.buttonRelay6.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay6.Location = new System.Drawing.Point(639, 252);
+            this.buttonRelay6.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay6.Name = "buttonRelay6";
             this.buttonRelay6.Size = new System.Drawing.Size(122, 46);
             this.buttonRelay6.TabIndex = 37;
@@ -535,8 +535,8 @@ namespace KomaHub
             // 
             this.buttonRelay2.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay2.Location = new System.Drawing.Point(639, 58);
-            this.buttonRelay2.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay2.Location = new System.Drawing.Point(639, 56);
+            this.buttonRelay2.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay2.Name = "buttonRelay2";
             this.buttonRelay2.Size = new System.Drawing.Size(122, 41);
             this.buttonRelay2.TabIndex = 18;
@@ -548,8 +548,8 @@ namespace KomaHub
             // 
             this.buttonRelay3.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay3.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay3.Location = new System.Drawing.Point(639, 107);
-            this.buttonRelay3.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay3.Location = new System.Drawing.Point(639, 105);
+            this.buttonRelay3.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay3.Name = "buttonRelay3";
             this.buttonRelay3.Size = new System.Drawing.Size(122, 41);
             this.buttonRelay3.TabIndex = 22;
@@ -561,8 +561,8 @@ namespace KomaHub
             // 
             this.buttonRelay4.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay4.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay4.Location = new System.Drawing.Point(639, 156);
-            this.buttonRelay4.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay4.Location = new System.Drawing.Point(639, 154);
+            this.buttonRelay4.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay4.Name = "buttonRelay4";
             this.buttonRelay4.Size = new System.Drawing.Size(122, 41);
             this.buttonRelay4.TabIndex = 26;
@@ -574,8 +574,8 @@ namespace KomaHub
             // 
             this.buttonRelay5.BackColor = System.Drawing.Color.Lime;
             this.buttonRelay5.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.buttonRelay5.Location = new System.Drawing.Point(639, 205);
-            this.buttonRelay5.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonRelay5.Location = new System.Drawing.Point(639, 203);
+            this.buttonRelay5.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.buttonRelay5.Name = "buttonRelay5";
             this.buttonRelay5.Size = new System.Drawing.Size(122, 41);
             this.buttonRelay5.TabIndex = 30;

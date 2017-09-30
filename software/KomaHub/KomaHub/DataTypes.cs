@@ -47,8 +47,24 @@ namespace KomaHub
             PWM_FAST = 5
         }
 
-        public OutputType type;
-        public String name;
-        public float fuseCurrent;
+        public OutputType type = OutputType.OFF;
+        public String name = "";
+        public float fuseCurrent = 0.0f;
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            KomahubOutput other = (KomahubOutput)obj;
+
+            return type.Equals(other.type) && name.Equals(other.name) && fuseCurrent == other.fuseCurrent;
+        }
+
+        public override int GetHashCode()
+        {
+            return type.GetHashCode() + name.GetHashCode() + fuseCurrent.GetHashCode();
+        }
     }
 }

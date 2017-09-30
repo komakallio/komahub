@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace KomaHub
 {
@@ -22,6 +23,10 @@ namespace KomaHub
         private BackgroundWorker backgroundWorker = new BackgroundWorker();
         private BackgroundWorker statusWorker = new BackgroundWorker();
         private KomaHubHID komaHub = new KomaHubHID();
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
+        private const int WM_SETREDRAW = 11; 
 
         public KomaHubForm()
         {
@@ -38,8 +43,6 @@ namespace KomaHub
             serialLabel.BringToFront();
 
             Connected = false;
-
-            Update(uiState);
 
             StartDeviceDetection();
         }
@@ -61,45 +64,38 @@ namespace KomaHub
 
         private void DetectDevice(object sender, DoWorkEventArgs args)
         {
-            bool found = false;
-            while (!found)
+            while (!komaHub.openDevice())
             {
-                found = komaHub.openDevice();
-                if (found)
-                {
-                    var factorySettings = komaHub.readFactorySettings();
-                    serialLabel.Text = String.Format("S/N #{0,4:D4}", factorySettings.SerialNumber);
-                    serialLabel.Visible = true;
-                    firmwareLabel.Text = String.Format("Firmware v{0}.{1}", factorySettings.FirmwareVersion >> 8, factorySettings.FirmwareVersion & 0xFF);
-                    firmwareLabel.Visible = true;
-
-                    for (int i = 0; i < 6; i++)
-                    {
-                        uiState.Outputs[i] = komaHub.readOutput(i);
-                    }
-
-                    uiState.Status = komaHub.readStatus();
-                    break;
-                }
-
                 StatusText = "No device found";
-                Update(uiState);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    Update(uiState);
+                });
                 Thread.Sleep(1000);
             }
-             
+
+            var factorySettings = komaHub.readFactorySettings();
+            serialLabel.Text = String.Format("S/N #{0,4:D4}", factorySettings.SerialNumber);
+            serialLabel.Visible = true;
+            firmwareLabel.Text = String.Format("Firmware v{0}.{1}", factorySettings.FirmwareVersion >> 8, factorySettings.FirmwareVersion & 0xFF);
+            firmwareLabel.Visible = true;
+
+            for (int i = 0; i < 6; i++)
+            {
+                uiState.Outputs[i] = komaHub.readOutput(i);
+            }
+
+            uiState.Status = komaHub.readStatus();
+ 
             Connected = true;
             StatusText = "Device Connected";
-            this.Invoke((MethodInvoker)delegate
-            {
-                Update(uiState);
-            });
         }
 
         private void UpdateStatus(object sender, DoWorkEventArgs args)
         {
             while (true)
             {
-                if (komaHub.Connected)
+                if (Connected)
                 {
                     uiState.Status = komaHub.readStatus();
                     this.Invoke((MethodInvoker)delegate
@@ -117,7 +113,9 @@ namespace KomaHub
             outputName.Text = (uiState.Outputs[output].type != KomahubOutput.OutputType.OFF ? uiState.Outputs[output].name : "Disabled");
             button.Visible = (uiState.Outputs[output].type != KomahubOutput.OutputType.OFF);
             pwmDuty.Visible = (uiState.Outputs[output].type == KomahubOutput.OutputType.PWM);
-            pwmDuty.SelectedIndex = 20 - uiState.Status.pwmDuty[output] / 20 - 1;
+            int index = 20 - uiState.Status.pwmDuty[output] / 5;
+            if (index == 20) index = 19;
+            pwmDuty.SelectedIndex = index;
             button.Enabled = Connected;
 
             if (!Connected)
@@ -149,6 +147,8 @@ namespace KomaHub
 
         public void Update(UIState uiState)
         {
+            SendMessage(this.Handle, WM_SETREDRAW, false, 0);
+
             this.groupBoxRelayControl.Enabled = Connected;
             this.groupBoxSensors.Enabled = true;
 
@@ -183,10 +183,13 @@ namespace KomaHub
             this.labelSQM.Enabled = uiState.FactorySettings.featureSkyQuality;
             this.labelSQMTitle.Enabled = uiState.FactorySettings.featureSkyQuality;
 
-            this.labelInputVoltage.Text = string.Format("{0:F2} V", uiState.Status.inputVoltage);
+            this.labelInputVoltage.Text = string.Format("{0:F1} V", uiState.Status.inputVoltage);
             this.labelInputVoltage.ForeColor = uiState.Status.inputVoltage < 12.0 || uiState.Status.inputVoltage >= 14.0 ? Color.Red : Color.Black;
 
             this.labelStatusText.Text = StatusText;
+
+            SendMessage(this.Handle, WM_SETREDRAW, true, 0);
+            this.Refresh();
         }
 
         public void ApplySettings(UIState newUiState)
@@ -251,32 +254,37 @@ namespace KomaHub
         private void pwmDuty1_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[0] = (byte)(100 - pwmDuty1.SelectedIndex * 5);
-//            komaHub.setPwmDuty(0, uiState.Status.pwmDuty[0]);
+            komaHub.setPwmDuty(0, uiState.Status.pwmDuty[0]);
         }
 
         private void pwmDuty2_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[1] = (byte)(100 - pwmDuty2.SelectedIndex * 5);
+            komaHub.setPwmDuty(1, uiState.Status.pwmDuty[1]);
         }
 
         private void pwmDuty3_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[2] = (byte)(100 - pwmDuty3.SelectedIndex * 5);
+            komaHub.setPwmDuty(2, uiState.Status.pwmDuty[2]);
         }
 
         private void pwmDuty4_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[3] = (byte)(100 - pwmDuty4.SelectedIndex * 5);
+            komaHub.setPwmDuty(3, uiState.Status.pwmDuty[3]);
         }
 
         private void pwmDuty5_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[4] = (byte)(100 - pwmDuty5.SelectedIndex * 5);
+            komaHub.setPwmDuty(4, uiState.Status.pwmDuty[4]);
         }
 
         private void pwmDuty6_SelectedItemChanged(object sender, EventArgs e)
         {
             uiState.Status.pwmDuty[5] = (byte)(100 - pwmDuty6.SelectedIndex * 5);
+            komaHub.setPwmDuty(5, uiState.Status.pwmDuty[5]);
         }
     }
 }
