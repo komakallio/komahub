@@ -59,8 +59,8 @@ public:
             uint8_t type:4;
             uint8_t pidSensor:2;
         } type;
-//        uint8_t reserved[3];
-        // 18 bytes
+        uint8_t reserved[3];
+        // 21 bytes * 6 = 126 bytes
     };
 
     struct OutputSettings {

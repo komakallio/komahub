@@ -52,11 +52,6 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
     if (data[pos++] != 'K')
         return;
 
-    uint8_t cmdlength = data[pos++];
-    if (pos+cmdlength >= maxlen) {
-        return;
-    }
-
     while (pos < maxlen) {
         uint8_t command = data[pos++];
         switch (command) {
@@ -84,21 +79,20 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case GETOUTPUTSETTINGS: {
-                if (cmdlength-1 < (uint8_t)sizeof(GetOutputSettingsCommand)) {
-                    pos += sizeof(GetOutputSettingsCommand);
-                    continue;
-                }
                 GetOutputSettingsCommand* cmd = (GetOutputSettingsCommand*)&data[pos];
+                int output = cmd->outputNumber;
                 
                 uint8_t *dst = &usbSendBuffer[0];
                 const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
                 
                 for (unsigned int i = 0; i < 16; i++)  {
-                    *dst++ = outputSettings.outputs[cmd->outputNumber].name[i];
+                    *dst++ = outputSettings.outputs[output].name[i];
                 }
-                *dst++ = outputSettings.outputs[cmd->outputNumber].fuseCurrent;
-                *dst++ = outputSettings.outputs[cmd->outputNumber].type.type;
+                *dst++ = outputSettings.outputs[output].fuseCurrent;
+                *dst++ = outputSettings.outputs[output].type.type;
+
                 RawHID.send(usbSendBuffer, 1000);
+                pos += sizeof(GetOutputSettingsCommand);
                 break;
             }
 
@@ -147,22 +141,12 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case FACTORYRESET: {
-                if (cmdlength-1 < (uint8_t)sizeof(FactoryResetCommand)) {
-                    pos += sizeof(FactoryResetCommand);
-                    continue;
-                }
-
                 FactoryResetCommand* cmd = (FactoryResetCommand*)&data[pos];
                 USB::hubConfiguration->factoryReset(cmd->serial, cmd->r6ohms, cmd->r7ohms);
                 pos += sizeof(FactoryResetCommand);
                 break;
             }
             case SETRELAY: {
-                if (cmdlength-1 < (uint8_t)sizeof(SetRelayCommand)) {
-                    pos += sizeof(SetRelayCommand);
-                    continue;
-                }
-
                 SetRelayCommand* cmd = (SetRelayCommand*)&data[pos];
                 if (cmd->enabled) {
                     hubConfiguration->getState().relayIsOpenBits |= (1 << cmd->outputNumber);
@@ -174,11 +158,6 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
             case SETPWMDUTY: {
-                if (cmdlength-1 < (uint8_t)sizeof(SetPwmDutyCommand)) {
-                    pos += sizeof(SetPwmDutyCommand);
-                    continue;
-                }
-
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
                 hubConfiguration->saveState();
@@ -186,11 +165,6 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
             case RESETFUSE: {
-                if (cmdlength-1 < (uint8_t)sizeof(ResetFuseCommand)) {
-                    pos += sizeof(ResetFuseCommand);
-                    continue;
-                }
-
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
                 hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
                 hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
@@ -199,15 +173,13 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
             case CONFIGUREOUTPUT: {
-                if (cmdlength-1 < (uint8_t)sizeof(ConfigureOutputCommand)) {
-                    pos += sizeof(ConfigureOutputCommand);
-                    continue;
-                }
                 HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
 
                 ConfigureOutputCommand* cmd = (ConfigureOutputCommand*)&data[pos];
                 outputSettings.outputs[cmd->outputNumber].type.type = cmd->outputType;
                 outputSettings.outputs[cmd->outputNumber].fuseCurrent = cmd->fuseCurrent;
+                memcpy(outputSettings.outputs[cmd->outputNumber].name, cmd->name, 16);
+                hubConfiguration->saveOutputConfiguration();
                 pos += sizeof(ConfigureOutputCommand);
                 break;
             }

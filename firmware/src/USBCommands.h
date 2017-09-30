@@ -45,38 +45,38 @@ struct FactoryResetCommand {
     uint16_t serial;
     uint16_t r6ohms;
     uint16_t r7ohms;
-};
+} __attribute__((__packed__));
 
 struct GetOutputSettingsCommand {
     uint8_t outputNumber;
-};
+} __attribute__((__packed__));
 
 struct UpdateSettingsCommand {
     uint8_t features;
     uint8_t sqmzeropoint;
     uint8_t fusespeed;
-};
+} __attribute__((__packed__));
 
 struct SetRelayCommand {
     uint8_t outputNumber;
     uint8_t enabled;
-};
+} __attribute__((__packed__));
 
 struct SetPwmDutyCommand {
     uint8_t outputNumber;
     uint8_t duty; // 0-100
-};
+} __attribute__((__packed__));
 
 struct ResetFuseCommand {
     uint8_t outputNumber;
-};
+} __attribute__((__packed__));
 
 struct ConfigureOutputCommand {
     uint8_t outputNumber;
     uint8_t outputType;  
     uint8_t fuseCurrent;
     char name[16];
-};
+} __attribute__((__packed__));
 
 
 #endif
