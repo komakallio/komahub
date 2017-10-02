@@ -50,7 +50,7 @@ public:
             uint8_t reserved:4;
         } features;
         // max 32 bytes
-    };
+    } __attribute__((__packed__));
 
     struct Output {
         char name[16];
@@ -61,12 +61,12 @@ public:
         } type;
         uint8_t reserved[3];
         // 21 bytes * 6 = 126 bytes
-    };
+    } __attribute__((__packed__));
 
     struct OutputSettings {
         Output outputs[6];
         // max 128 bytes
-    };
+    } __attribute__((__packed__));
 
     struct State {
         uint8_t counter;
@@ -74,7 +74,7 @@ public:
         uint8_t fuseIsBlownBits;
         uint8_t pwmPercentages[6];
         // 9 bytes
-    };
+    } __attribute__((__packed__));
 
 public:
     HubConfiguration();
