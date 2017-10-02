@@ -34,11 +34,13 @@ enum USBCommand {
     SETPWMDUTY = 0x11,
     RESETFUSE = 0x12,
     CONFIGUREOUTPUT = 0x13,
+    CONFIGURESETTINGS = 0x14,
 
     DUMPFACTORY = 0xF0,
     DUMPOUTPUTS = 0xF1,
     DUMPSTATE = 0xF2,
-    FACTORYRESET = 0xFA
+    FACTORYRESET = 0xFA,
+    REBOOT_BOOTLOADER = 0xFB
 };
 
 struct FactoryResetCommand {
@@ -78,5 +80,13 @@ struct ConfigureOutputCommand {
     char name[16];
 } __attribute__((__packed__));
 
+struct ConfigureSettingsCommand {
+    uint8_t fuseDelay;
+    uint8_t skyQualityOffset;
+    uint8_t featureTempProbe;
+    uint8_t featureSkyQuality;
+    uint8_t featureAmbientPTH;
+    uint8_t featureSkyTemperature;
+} __attribute__((__packed__));
 
 #endif

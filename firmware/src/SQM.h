@@ -28,6 +28,7 @@ class SQM {
 public:
     static void init(class HubConfiguration* hubConfiguration);
     static void loop();
+    static void stop();
 
     static int getFrequencyHz();
     static float getSQM();

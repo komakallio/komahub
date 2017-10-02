@@ -43,6 +43,11 @@ void SQM::init(HubConfiguration* hubConfiguration) {
     SQM::freq = 0;
 }
 
+void SQM::stop() {
+    FreqMeasure.end();
+    FreqCount.end();
+}
+
 void SQM::switchToMeasure() {
     FreqMeasure.begin();
     FreqCount.end();

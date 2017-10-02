@@ -23,6 +23,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <SQM.h>
 
 #ifdef CORE_TEENSY_RAWHID
 
@@ -146,6 +147,10 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(FactoryResetCommand);
                 break;
             }
+            case REBOOT_BOOTLOADER: {
+                _reboot_Teensyduino_();
+                break;
+            }
             case SETRELAY: {
                 SetRelayCommand* cmd = (SetRelayCommand*)&data[pos];
                 if (cmd->enabled) {
@@ -181,6 +186,21 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 memcpy(outputSettings.outputs[cmd->outputNumber].name, cmd->name, 16);
                 hubConfiguration->saveOutputConfiguration();
                 pos += sizeof(ConfigureOutputCommand);
+                break;
+            }
+            case CONFIGURESETTINGS: {
+                HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
+
+                ConfigureSettingsCommand* cmd = (ConfigureSettingsCommand*)&data[pos];
+                factoryConfig.fuseDelay = cmd->fuseDelay;
+                factoryConfig.skyQualityOffset = cmd->skyQualityOffset;
+                factoryConfig.features.tempprobes = cmd->featureTempProbe;
+                factoryConfig.features.skyquality = cmd->featureSkyQuality;
+                factoryConfig.features.ambientpth = cmd->featureAmbientPTH;
+                factoryConfig.features.skytemp = cmd->featureSkyTemperature;
+                hubConfiguration->saveFactoryConfig();
+                
+                pos += sizeof(ConfigureSettingsCommand);
                 break;
             }
         }
