@@ -39,8 +39,8 @@ public:
         char komahub[8];
         uint16_t serial;
         float r6r7divisor;
-        uint8_t fuseSpeed;
-        uint8_t sqmZeroPoint;
+        uint8_t fuseDelay;
+        uint8_t skyQualityOffset;
         
         struct Features {
             uint8_t tempprobes:1;
@@ -81,6 +81,7 @@ public:
     void loadStoredConfiguration();
     void saveState();
     void saveOutputConfiguration();
+    void saveFactoryConfig();
     void factoryReset(int serialNumber, int r6ohms, int r7ohms);
 
     HubConfiguration::FactoryConfig& getFactoryConfig();

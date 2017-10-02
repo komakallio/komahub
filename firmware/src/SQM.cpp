@@ -85,6 +85,6 @@ int SQM::getFrequencyHz() {
 }
 
 float SQM::getSQM() {
-    return hubConfiguration->getFactoryConfig().sqmZeroPoint/10.0 - 2.5 * log10(freq);
+    return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
 }
 

@@ -102,8 +102,8 @@ void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms) {
     this->factoryConfig.features.skyquality = 0;
     this->factoryConfig.features.ambientpth = 0;
     this->factoryConfig.features.skytemp = 0;
-    this->factoryConfig.sqmZeroPoint = 21;
-    this->factoryConfig.fuseSpeed = 100;
+    this->factoryConfig.skyQualityOffset = 210;
+    this->factoryConfig.fuseDelay = 10;
     initEEPROM(this->factoryConfig, this->outputSettings, this->state);
 }
 
@@ -112,7 +112,7 @@ void HubConfiguration::resetConfiguration() {
     memcpy(&this->factoryConfig.komahub[0], "KOMAHUB\0", 8);
     this->factoryConfig.serial = 0;
     this->factoryConfig.r6r7divisor = 6;
-    this->factoryConfig.fuseSpeed = 10;
+    this->factoryConfig.fuseDelay = 10;
 
     memset(&this->outputSettings, 0, sizeof(OutputSettings));
     for (int i = 0; i < 6; i++) {
@@ -159,4 +159,8 @@ void HubConfiguration::saveState() {
 
 void HubConfiguration::saveOutputConfiguration() {
     eepromcpyto(OUTPUTSETTINGS_OFFSET, &outputSettings, sizeof(OutputSettings));
+}
+
+void HubConfiguration::saveFactoryConfig() {
+    eepromcpyto(FACTORYCONFIG_OFFSET, &factoryConfig, sizeof(FactoryConfig));
 }

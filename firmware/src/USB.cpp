@@ -67,8 +67,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
                 *dst++ = (factoryConfig.serial & 0xFF00) >> 8;
                 *dst++ = factoryConfig.serial & 0xFF;
-                *dst++ = factoryConfig.fuseSpeed;
-                *dst++ = factoryConfig.sqmZeroPoint;
+                *dst++ = factoryConfig.fuseDelay;
+                *dst++ = factoryConfig.skyQualityOffset;
                 *dst++ = (uint8_t)(
                     (factoryConfig.features.tempprobes ? (1 << 0) : 0) +
                     (factoryConfig.features.skyquality ? (1 << 1) : 0) +
