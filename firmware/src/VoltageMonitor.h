@@ -29,13 +29,10 @@ public:
     static void init(class HubConfiguration* hubConfiguration);
     static void loop();
 
-    static float getInputVoltage();
-    static float getOutputPower(int output);
+    static float getInputVoltage();    
 
 private:
-    static float inputVoltage;
-    static float outputPowers[6];
-    static class HubConfiguration* hubConfiguration;
+    static class HubConfiguration* hubConfiguration;    
 };
 
 #endif

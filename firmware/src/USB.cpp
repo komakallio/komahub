@@ -29,6 +29,7 @@
 
 #include "AnalogInput.h"
 #include "HubConfiguration.h"
+#include "PowerOutputs.h"
 #include "USB.h"
 #include "USBCommands.h"
 #include "Version.h"
@@ -109,7 +110,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 *dst++ = (uint8_t)(VoltageMonitor::getInputVoltage() * 10);
                 // amps
                 for (int i = 0; i < 6; i++) {
-                    *dst++ = (uint8_t)(VoltageMonitor::getOutputPower(i) * 10);
+                    *dst++ = (uint8_t)(PowerOutputs::getOutputPower(i) * 10);
                 }
                 // temperatures
                 // weather

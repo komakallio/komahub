@@ -47,7 +47,7 @@ static Task usbTask(10, TASK_FOREVER, &USB::loop);
 #endif
 static Task sqmTask(1000, TASK_FOREVER, &SQM::loop);
 static Task analogInputTask(10, TASK_FOREVER, &AnalogInput::loop);
-static Task powerOutputsTask(10, TASK_FOREVER, &PowerOutputs::loop);
+static Task powerOutputsTask(5, TASK_FOREVER, &PowerOutputs::loop);
 static Task temperatureSensorsTask(2000, TASK_FOREVER, &TemperatureSensors::loop);
 static Task weatherTask(2000, TASK_FOREVER, &Weather::loop);
 static Task voltageMonitorTask(10, TASK_FOREVER, &VoltageMonitor::loop);

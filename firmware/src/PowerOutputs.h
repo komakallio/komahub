@@ -24,17 +24,23 @@
 #ifndef POWEROUTPUTS_H
 #define POWEROUTPUTS_H
 
+#include <HubConfiguration.h>
+
 class PowerOutputs {
 public:
-    static void init(class HubConfiguration* hubConfiguration);
+    static void init(HubConfiguration* hubConfiguration);
     static void loop();
 
+    static float getOutputPower(int output);
+
 private:
+    static bool pwmState(const HubConfiguration::State& state, int output);
     static void tripFusesIfNecessary();
     static void updatePowerOutputs();
 
 private:
     static class HubConfiguration* hubConfiguration;
+    static int pwmCounter;
 };
 
 #endif

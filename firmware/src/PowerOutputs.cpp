@@ -23,32 +23,38 @@
 
 #include <Arduino.h>
 
+#include "AnalogInput.h"
 #include "HubConfiguration.h"
 #include "KomaHubPins.h"
 #include "PowerOutputs.h"
 #include "USBCommands.h"
-#include "VoltageMonitor.h"
 
-#define PWM_CYCLE_LENGTH_MS 100
+#define PWM_CYCLE_COUNT 20
 
 HubConfiguration* PowerOutputs::hubConfiguration;
+int PowerOutputs::pwmCounter;
 
-static bool pwmState(const HubConfiguration::State& state, int output) {
+bool PowerOutputs::pwmState(const HubConfiguration::State& state, int output) {
     if ((state.relayIsOpenBits & (1 << output)) == 0) {
         return false;
     }
 
     int duty = state.pwmPercentages[output];
-    int cycleOffset = output * PWM_CYCLE_LENGTH_MS / 6;
-    int pos = 100 * ((millis() + cycleOffset) % PWM_CYCLE_LENGTH_MS) / PWM_CYCLE_LENGTH_MS;
+    int cycleOffset = output * PWM_CYCLE_COUNT / 6;
+    int pos = 100 * ((pwmCounter + cycleOffset) % PWM_CYCLE_COUNT) / PWM_CYCLE_COUNT;
     return (pos < duty);
 }
 
 void PowerOutputs::init(HubConfiguration* hubConfiguration) {
     PowerOutputs::hubConfiguration = hubConfiguration;
+    pwmCounter = 0;
 }
 
 void PowerOutputs::loop() {
+    pwmCounter = (pwmCounter + 1) % 20;
+    if (pwmCounter == 0) {
+        AnalogInput::resetAverageCollectingPeriod();
+    }
     tripFusesIfNecessary();
     updatePowerOutputs();
 }
@@ -83,7 +89,7 @@ void PowerOutputs::tripFusesIfNecessary() {
     HubConfiguration::State& state = hubConfiguration->getState();
     uint8_t oldFuseIsBlownBits = state.fuseIsBlownBits;
     for (int output = 0; output < 6; output++) {
-        if (VoltageMonitor::getOutputPower(output) > outputSettings.outputs[output].fuseCurrent/10.0f) {
+        if (getOutputPower(output) > outputSettings.outputs[output].fuseCurrent/10.0f) {
             state.fuseIsBlownBits |= (1 << output);
         }
     }
@@ -91,4 +97,9 @@ void PowerOutputs::tripFusesIfNecessary() {
     if (oldFuseIsBlownBits != state.fuseIsBlownBits) {
         hubConfiguration->saveState();
     }
+}
+
+float PowerOutputs::getOutputPower(int output) {
+    uint16_t adcValue = AnalogInput::getAverageValues()[output+1];
+    return 10000 * 4.096 * adcValue / 1024.0f / 2000.0f;
 }

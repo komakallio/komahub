@@ -27,19 +27,16 @@
 #include "HubConfiguration.h"
 #include "KomaHubPins.h"
 
-#define RINGBUFFER_SIZE 64
-
 extern uint8_t w_analog_reference;
 
-static volatile uint16_t ringbuffer[RINGBUFFER_SIZE*8];
-static volatile uint16_t ringbufferHead;
 static volatile uint8_t pin;
+static volatile uint32_t sums[8];
+static volatile uint32_t counts[8];
+static uint16_t averages[8];
 
 static const uint8_t PROGMEM adc_mapping[] = {
    0, 1, 4, 5, 6, 7, 13, 12, 11, 10, 9, 8, 10, 11, 12, 13, 7, 6, 5, 4, 1, 0, 8 
 };
-
-uint16_t AnalogInput::averages[8];
 
 static void adc_start_measure(int pin) {
     int adc = pgm_read_byte(adc_mapping + pin);
@@ -73,8 +70,9 @@ void AnalogInput::init(HubConfiguration* hubConfiguration) {
     pinMode(KomaHub::SENSE5, INPUT);
     pinMode(KomaHub::SENSE6, INPUT);
 
-    memset(averages, 0, 8*sizeof(uint16_t));
-    ringbufferHead = 0;
+    memset((uint32_t*)sums, 0, 8*sizeof(uint32_t));
+    memset((uint32_t*)counts, 0, 8*sizeof(uint32_t));
+    memset((uint16_t*)averages, 0, 8*sizeof(uint32_t));
     pin = 1;
 
     cli();
@@ -83,43 +81,31 @@ void AnalogInput::init(HubConfiguration* hubConfiguration) {
 }
 
 ISR(ADC_vect) {
-	uint16_t h = ringbufferHead;
     uint16_t val = ADC;
 
-    ringbuffer[h] = val;	// put new data into buffer
-    h = (h+1) & 0x1FF;
-    ringbufferHead = h;
+    sums[pin-1] += val;
+    counts[pin-1]++;
 
     pin++;
     if (pin == 8) {
-        // we read pins 1..8, fill out the 8th byte with zero
-        h = (h+1) & 0x1FF;
-        ringbuffer[h] = 0;
-        ringbufferHead = h;
+        // we read pins 1..8, reset the counter
         pin = 1;
     }
     adc_start_measure(pin);
 }
 
-void AnalogInput::getAverageValues(uint16_t* arr) {
-    memcpy(arr, &averages[0], 8*sizeof(uint16_t));
+void AnalogInput::resetAverageCollectingPeriod() {
+    cli();
+    for (int i = 0; i < 8; i++) {
+        averages[i] = (uint16_t)(sums[i]/counts[i]);
+        sums[i] = counts[i] = 0;
+    }
+    sei();
+}
+
+const uint16_t* AnalogInput::getAverageValues() {
+    return averages;
 }
 
 void AnalogInput::loop() {
-    memset(&averages[0], 0, 8*sizeof(uint16_t));
-    // rewind 16 measurement rounds
-    int pos = (ringbufferHead - 16*8) & 0x1F8;
-
-    for (int i = 0; i < 16; i++) {
-        volatile uint16_t *src = &ringbuffer[pos];
-        for (int j = 0; j < 8; j++) {
-            averages[j] += *src++;
-        }
-        pos += 8;
-        pos &= 0x1F8;
-    }
-    for (int i = 0; i < 8; i++)  {
-        // normalize to 0..1023, round correctly
-        averages[i] = (averages[i] >> 4) + ((averages[i] & 0x8) >> 2);
-    }
 }

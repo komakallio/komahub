@@ -31,10 +31,11 @@ public:
     static void init(class HubConfiguration* hubConfiguration);
     static void loop();
 
-    static void getAverageValues(uint16_t* arr);
+    static void resetAverageCollectingPeriod();
+    static const uint16_t* getAverageValues();
 
 private:
-    static uint16_t averages[8];
+    static class HubConfiguration* hubConfiguration;    
 };
 
 #endif
