@@ -72,6 +72,19 @@ namespace KomaHub
             }
         }
 
+        public void resetFuse(int output)
+        {
+            byte[] report = new byte[64];
+            report[0] = KOMAHUB_MAGIC;
+            report[1] = Commands.ResetFuse;
+            report[2] = (byte)output;
+
+            lock (hubLock)
+            {
+                rawhid_send(0, report, 64, 100);
+            }
+        }
+
         public KomahubFactorySettings readFactorySettings()
         {
             byte[] report = new byte[64];

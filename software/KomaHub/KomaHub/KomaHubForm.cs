@@ -206,8 +206,17 @@ namespace KomaHub
 
         private void toggleRelay(int n)
         {
-            uiState.Status.relayIsOpen[n] = !uiState.Status.relayIsOpen[n];
-            komaHub.setRelay(n, uiState.Status.relayIsOpen[n]);
+            if (uiState.Status.fuseIsBlown[n])
+            {
+                komaHub.resetFuse(n);
+                uiState.Status.fuseIsBlown[n] = false;
+                uiState.Status.relayIsOpen[n] = false;
+            }
+            else
+            {
+                uiState.Status.relayIsOpen[n] = !uiState.Status.relayIsOpen[n];
+                komaHub.setRelay(n, uiState.Status.relayIsOpen[n]);
+            }
         }
 
         private void buttonRelay1On_Click(object sender, EventArgs e)
