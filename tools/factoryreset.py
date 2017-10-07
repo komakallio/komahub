@@ -22,12 +22,11 @@ def inttobytes(n):
 
 def factoryreset(serial, r6ohms, r7ohms):
     rh = TeensyRawhid.Rawhid()
-    buffer = [ord('K'), 0]
+    buffer = [ord('K')]
     buffer.append(0xFA)
     for b in inttobytes(serial): buffer.append(b)
     for b in inttobytes(r6ohms): buffer.append(b)
     for b in inttobytes(r7ohms): buffer.append(b)
-    buffer[1] = len(buffer)-2
     while len(buffer) < 64:
         buffer.append(0)
     print buffer

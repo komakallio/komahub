@@ -1,14 +1,14 @@
 import sys
 import TeensyRawhid
 
-KOMAHUB_VID = 0x16C0
-KOMAHUB_PID = 0x0470
+KOMAHUB_VID = 0x1209
+KOMAHUB_PID = 0x4242
 
 def usage():
     print 'usage: komahubsend.py <cmd> <byte> <byte> <byte>'
 
 def cmdlineargs(args):
-    if len(args) < 3:
+    if len(args) < 2:
         usage()
         sys.exit(1)
     return (int(sys.argv[1]), map(int, sys.argv[2:]))
@@ -18,11 +18,10 @@ def inttobytes(n):
 
 def send(cmd, data):
     rh = TeensyRawhid.Rawhid()
-    buffer = [ord('K'), 0]
+    buffer = [ord('K')]
     buffer.append(cmd)
-    for b in data: 
+    for b in data:
         buffer.append(b)
-    buffer[1] = len(buffer)-2
     while len(buffer) < 64:
         buffer.append(0)
     print 'Sending',
