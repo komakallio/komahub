@@ -2,6 +2,9 @@ import serial, sys, TeensyRawhid, time, numpy as np
 from pylab import *
 from scipy.optimize import curve_fit
 
+class OutputMeasurementError(BaseException):
+    pass
+
 class LoadGenerator:
     def __init__(self, device):
         self.serial = serial.Serial(device, 115200)
@@ -18,50 +21,70 @@ class KomaHub:
         self.komahub = TeensyRawhid.Rawhid()
         self.komahub.open(vid=self.KOMAHUB_VID, pid=self.KOMAHUB_PID)
 
-    def measureCurrent(self, output):
-        buffer = [ord('K'), 5]
+    def send(self, buffer):
         while len(buffer) < 64:
             buffer.append(0)
         self.komahub.send("".join(map(lambda x:chr(x), buffer)), 1000)
-        data = self.komahub.recv(64, 500)
-        return ord(data[((output)*2+1)]) * 256 + ord(data[(output)*2])
 
+    def recv(self):
+        data = self.komahub.recv(64, 500)
+        return map(lambda x:ord(x), data)
+
+    def setRelay(self, output, enabled):
+        self.send([ord('K'), 16, output, 1 if enabled else 0])
+
+    def measureCurrent(self, output):
+        self.send([ord('K'), 5])
+        data = self.recv()
+        return data[((output)*2+1)] * 256 + data[(output)*2]
+
+    def storeOutputCalibration(self, output, coeffs):
+        pass
 
 def usage():
     print 'usage: powercalibration.py <output>'
     print '   output - output to calibrate (1 to 6)'
 
-def calibrate(komahub, loadGenerator, output):
+def measure(komahub, loadGenerator, output):
+    adc = []
     amps = []
-    values = []
-    for milliamps in range(0, 400, 25):
-        loadGenerator.setLoad(milliamps)
-        time.sleep(1)
-        adcvalue = komahub.measureCurrent(output)
-        if adcvalue > 0:
-            print 'mA: %d adc: %d, k: %d' % (milliamps, adcvalue, int((milliamps/1000.0/adcvalue)*500000))
-            values.append(milliamps)
-        else:
-            values.append(0)
-        amps.append(adcvalue)
 
-    for milliamps in range(400, 4500, 100):
-        loadGenerator.setLoad(milliamps)
+    try:
+        loadGenerator.setLoad(0)
         time.sleep(1)
-        adcvalue = komahub.measureCurrent(output)
-        if adcvalue > 0:
-            print 'mA: %d adc: %d, k: %d' % (milliamps, adcvalue, int((milliamps/1000.0/adcvalue)*500000))
-            values.append(milliamps)
-        else:
-            values.append(0)
-        amps.append(adcvalue)
+        komahub.setRelay(output-1, True)
 
-    loadGenerator.setLoad(0)
-    return (amps, values)
+        load = 0
+        while load <= 4500:
+            loadGenerator.setLoad(load)
+            time.sleep(1)
+            current = komahub.measureCurrent(output)
+            amps.append(load)
+            adc.append(current)
+
+            if current == 0 and load >= 400:
+                raise OutputMeasurementError("Output measurement current not detected. Are you measuring the correct output?")
+
+            load += 10 if load < 500 else 100
+            sys.stdout.write('.')
+            sys.stdout.flush()
+    finally:
+        print
+        loadGenerator.setLoad(0)
+    return (adc, amps)
+
+def fit(adc, amps):
+    p = np.polyfit(adc, amps, 2)
+    coeffs = [ int(p[0]*1000), int(p[1]), int(p[2]) ]
+    print 'coefficients:', coeffs
+    return coeffs
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         usage()
         sys.exit(1)
 
-    (amps, values) = calibrate(KomaHub(), LoadGenerator('/dev/cu.usbserial-DA71J7S'), int(sys.argv[1]))
+    komahub = KomaHub()
+    output = int(sys.argv[1])
+    (adc, amps) = measure(komahub, LoadGenerator('/dev/cu.usbserial-DA71J7S'), output)
+    komahub.storeOutputCalibration(output, fit(adc, amps))
