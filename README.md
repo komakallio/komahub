@@ -1,9 +1,13 @@
 KomaHub Remote Power Switch and Sensor Platform
+===============================================
 
-EDA - schematics and board layout, made in Eagle
+Contents
+--------
 
-firmware - firmware code
+**EDA** - schematics and board layout, made in Eagle
 
-tools - tools for operating komahub
+**software** - KomaHub control software
 
+**firmware** - Firmware code
 
+**tools** - tools for operating the KomaHub
