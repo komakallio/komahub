@@ -83,10 +83,10 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             case GETOUTPUTSETTINGS: {
                 GetOutputSettingsCommand* cmd = (GetOutputSettingsCommand*)&data[pos];
                 int output = cmd->outputNumber;
-                
+
                 uint8_t *dst = &usbSendBuffer[0];
                 const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
-                
+
                 for (unsigned int i = 0; i < 16; i++)  {
                     *dst++ = outputSettings.outputs[output].name[i];
                 }
@@ -223,7 +223,7 @@ void USB::handlePacket(uint8_t* buffer) {
     uint8_t identifier = buffer[0];
     unsigned int len = buffer[1];
     uint8_t* data = &buffer[2];
-    if (identifier != 'K' || 
+    if (identifier != 'K' ||
         len >= 62) {
         return;
     }
@@ -233,6 +233,6 @@ void USB::handlePacket(uint8_t* buffer) {
 
 void USB::init(HubConfiguration* hubConfiguration) {
     USB::hubConfiguration = hubConfiguration;
-} 
+}
 
 #endif

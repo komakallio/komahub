@@ -69,7 +69,7 @@ void HubConfiguration::loadStoredConfiguration() {
     eepromcpyfrom(&this->outputSettings, OUTPUTSETTINGS_OFFSET, sizeof(OutputSettings));
 
     this->stateIndex = findLatestStateIndex();
-    eepromcpyfrom(&this->state, STATE_OFFSET + sizeof(State)*this->stateIndex, sizeof(State)); 
+    eepromcpyfrom(&this->state, STATE_OFFSET + sizeof(State)*this->stateIndex, sizeof(State));
 }
 
 int HubConfiguration::findLatestStateIndex() {
@@ -159,7 +159,7 @@ void HubConfiguration::saveState() {
     if (this->stateIndex >= MAX_STATE_INDEX) {
         this->stateIndex = 0;
     }
-    eepromcpyto(STATE_OFFSET + sizeof(State)*this->stateIndex, &this->state, sizeof(State)); 
+    eepromcpyto(STATE_OFFSET + sizeof(State)*this->stateIndex, &this->state, sizeof(State));
 }
 
 void HubConfiguration::saveOutputConfiguration() {

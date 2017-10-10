@@ -76,7 +76,7 @@ struct ResetFuseCommand {
 
 struct ConfigureOutputCommand {
     uint8_t outputNumber;
-    uint8_t outputType;  
+    uint8_t outputType;
     uint8_t fuseCurrent;
     char name[16];
 } __attribute__((__packed__));
