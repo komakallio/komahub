@@ -41,8 +41,14 @@ class KomaHub:
         data = self.recv()
         return data[((output)*2+1)] * 256 + data[(output)*2]
 
+    def _signedIntToByte(self, value):
+        if (value < 0):
+            return 256+value
+        else:
+            return value
+
     def storeOutputCalibration(self, output, coeffs):
-        pass
+        self.send([ord('K'), 0xFC, output, self._signedIntToByte(coeffs[0]), coeffs[1], coeffs[2]])
 
 def usage():
     print 'usage: powercalibration.py <output>'
