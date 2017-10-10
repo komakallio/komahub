@@ -5,6 +5,9 @@ from scipy.optimize import curve_fit
 class OutputMeasurementError(BaseException):
     pass
 
+class CalibrationError(BaseException):
+    pass
+
 class LoadGenerator:
     def __init__(self, device):
         self.serial = serial.Serial(device, 115200)
@@ -77,6 +80,8 @@ def fit(adc, amps):
     p = np.polyfit(adc, amps, 2)
     coeffs = [ int(p[0]*1000), int(p[1]), int(p[2]) ]
     print 'coefficients:', coeffs
+    if coeffs[0] < -128 or coeffs[0] > 127 or coeffs[1] < 0 or coeffs[1] > 255 or coeffs[2] < 0 or coeffs[2] > 255:
+        raise CalibrationError("Calibration coefficient(s) out of range (-128..127, 0..255, 0..255)")
     return coeffs
 
 if __name__ == '__main__':
