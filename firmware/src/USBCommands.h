@@ -40,7 +40,8 @@ enum USBCommand {
     DUMPOUTPUTS = 0xF1,
     DUMPSTATE = 0xF2,
     FACTORYRESET = 0xFA,
-    REBOOT_BOOTLOADER = 0xFB
+    REBOOT_BOOTLOADER = 0xFB,
+    CALIBRATEOUTPUT = 0xFC
 };
 
 struct FactoryResetCommand {
@@ -87,6 +88,13 @@ struct ConfigureSettingsCommand {
     uint8_t featureSkyQuality;
     uint8_t featureAmbientPTH;
     uint8_t featureSkyTemperature;
+} __attribute__((__packed__));
+
+struct CalibrateOutputCommand {
+    uint8_t outputNumber;
+    int8_t a;
+    uint8_t b;
+    uint8_t c;
 } __attribute__((__packed__));
 
 #endif

@@ -200,8 +200,19 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 factoryConfig.features.ambientpth = cmd->featureAmbientPTH;
                 factoryConfig.features.skytemp = cmd->featureSkyTemperature;
                 hubConfiguration->saveFactoryConfig();
-                
+
                 pos += sizeof(ConfigureSettingsCommand);
+                break;
+            }
+            case CALIBRATEOUTPUT: {
+                HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
+
+                CalibrateOutputCommand* cmd = (CalibrateOutputCommand*)&data[pos];
+                outputSettings.outputs[cmd->outputNumber].coeffs.a = cmd->a;
+                outputSettings.outputs[cmd->outputNumber].coeffs.b = cmd->b;
+                outputSettings.outputs[cmd->outputNumber].coeffs.c = cmd->c;
+                hubConfiguration->saveOutputConfiguration();
+                pos += sizeof(ConfigureOutputCommand);
                 break;
             }
         }

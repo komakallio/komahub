@@ -99,7 +99,11 @@ void PowerOutputs::tripFusesIfNecessary() {
     }
 }
 
-float PowerOutputs::getOutputPower(int output) {
-    uint16_t adcValue = AnalogInput::getAverageValues()[output+1];
-    return 10000 * 4.096 * adcValue / 1024.0f / 2000.0f;
+float PowerOutputs::getOutputPower(int outputNumber) {
+    const HubConfiguration::Output& output = hubConfiguration->getOutputSettings().outputs[outputNumber];
+
+    uint16_t adcValue = AnalogInput::getAverageValues()[outputNumber+1];
+
+    // Approximate true power usage with a second-order function
+    return (output.coeffs.a/1000.0)*adcValue*adcValue + output.coeffs.b*adcValue + output.coeffs.c;
 }

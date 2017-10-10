@@ -59,7 +59,11 @@ public:
             uint8_t type:4;
             uint8_t pidSensor:2;
         } type;
-        uint8_t reserved[3];
+        struct Coefficients {
+            int8_t a;
+            uint8_t b;
+            uint8_t c;
+        } coeffs;
         // 21 bytes * 6 = 126 bytes
     } __attribute__((__packed__));
 

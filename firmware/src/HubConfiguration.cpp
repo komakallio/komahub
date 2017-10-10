@@ -116,10 +116,15 @@ void HubConfiguration::resetConfiguration() {
 
     memset(&this->outputSettings, 0, sizeof(OutputSettings));
     for (int i = 0; i < 6; i++) {
-        strncpy(this->outputSettings.outputs[i].name, (String("Output ") + String(i+1)).c_str(), 16);
-        this->outputSettings.outputs[i].fuseCurrent = 50; // 5 amps
-        this->outputSettings.outputs[i].type.type = DC;
-        this->outputSettings.outputs[i].type.pidSensor = 0;
+        HubConfiguration::Output& output = this->outputSettings.outputs[i];
+        strncpy(output.name, (String("Output ") + String(i+1)).c_str(), 16);
+        output.fuseCurrent = 50; // 5 amps
+        output.type.type = DC;
+        output.type.pidSensor = 0;
+        // Approximate coefficients averaged from all outputs of a prototype KomaHub
+        output.coeffs.a = -67; // FIXME: values are placeholders
+        output.coeffs.b = 15;
+        output.coeffs.c = 10;
     }
 
     memset(&this->state, 0, sizeof(State));
