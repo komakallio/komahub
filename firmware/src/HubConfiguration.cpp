@@ -121,10 +121,10 @@ void HubConfiguration::resetConfiguration() {
         output.fuseCurrent = 50; // 5 amps
         output.type.type = DC;
         output.type.pidSensor = 0;
-        // Approximate coefficients averaged from all outputs of a prototype KomaHub
-        output.coeffs.a = -67; // FIXME: values are placeholders
-        output.coeffs.b = 15;
-        output.coeffs.c = 10;
+        // Approximate coefficients from a prototype KomaHub
+        output.coeffs.a = -18;
+        output.coeffs.b = 23;
+        output.coeffs.c = 95;
     }
 
     memset(&this->state, 0, sizeof(State));
