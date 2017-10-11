@@ -103,7 +103,10 @@ float PowerOutputs::getOutputPower(int outputNumber) {
     const HubConfiguration::Output& output = hubConfiguration->getOutputSettings().outputs[outputNumber];
 
     uint16_t adcValue = AnalogInput::getAverageValues()[outputNumber+1];
+    if (adcValue == 0) {
+        return 0.0f;
+    }
 
     // Approximate true power usage with a second-order function
-    return (output.coeffs.a/1000.0)*adcValue*adcValue + output.coeffs.b*adcValue + output.coeffs.c;
+    return 0.001 * ((output.coeffs.a/1000.0)*adcValue*adcValue + output.coeffs.b*adcValue + output.coeffs.c);
 }
