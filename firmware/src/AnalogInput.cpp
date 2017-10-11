@@ -72,7 +72,7 @@ void AnalogInput::init(HubConfiguration* hubConfiguration) {
 
     memset((uint32_t*)sums, 0, 8*sizeof(uint32_t));
     memset((uint32_t*)counts, 0, 8*sizeof(uint32_t));
-    memset((uint16_t*)averages, 0, 8*sizeof(uint32_t));
+    memset((uint16_t*)averages, 0, 8*sizeof(uint16_t));
     pin = 1;
 
     cli();
