@@ -119,6 +119,13 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
 
+            case GETPOWERUSAGE: {
+                const uint16_t *inputValues = AnalogInput::getAverageValues();
+                memcpy(usbSendBuffer, inputValues, 8*sizeof(uint16_t));
+                RawHID.send(usbSendBuffer, 1000);
+                break;
+            }
+
             case DUMPFACTORY: {
                 uint8_t *dst = usbSendBuffer;
                 for (unsigned int i = 0; i < sizeof(HubConfiguration::FactoryConfig); i++)
