@@ -49,6 +49,7 @@ struct FactoryResetCommand {
     uint16_t serial;
     uint16_t r6ohms;
     uint16_t r7ohms;
+    uint8_t boardRevision;
 } __attribute__((__packed__));
 
 struct GetOutputSettingsCommand {

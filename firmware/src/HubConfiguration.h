@@ -49,6 +49,8 @@ public:
             uint8_t skytemp:1;
             uint8_t reserved:4;
         } features;
+        
+        uint8_t boardRevision;
         // max 32 bytes
     } __attribute__((__packed__));
 

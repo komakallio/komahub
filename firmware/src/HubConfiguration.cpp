@@ -101,10 +101,11 @@ int HubConfiguration::findLatestStateIndex() {
     }
 }
 
-void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms) {
+void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms, uint8_t boardRevision) {
     resetConfiguration();
     this->factoryConfig.serial = serialNumber;
     this->factoryConfig.r6r7divisor = r6ohms / (float)r7ohms;
+    this->factoryConfig.boardRevision = 0x10;
     this->factoryConfig.features.tempprobes = 0;
     this->factoryConfig.features.skyquality = 0;
     this->factoryConfig.features.ambientpth = 0;

@@ -76,6 +76,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                     (factoryConfig.features.skyquality ? (1 << 1) : 0) +
                     (factoryConfig.features.ambientpth ? (1 << 2) : 0) +
                     (factoryConfig.features.skytemp ? (1 << 3) : 0));
+                *dst++ = factoryConfig.boardRevision;
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
@@ -151,7 +152,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case FACTORYRESET: {
                 FactoryResetCommand* cmd = (FactoryResetCommand*)&data[pos];
-                USB::hubConfiguration->factoryReset(cmd->serial, cmd->r6ohms, cmd->r7ohms);
+                USB::hubConfiguration->factoryReset(cmd->serial, cmd->r6ohms, cmd->r7ohms, cmd->boardRevision);
                 pos += sizeof(FactoryResetCommand);
                 break;
             }
