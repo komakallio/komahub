@@ -34,6 +34,9 @@
 HubConfiguration* PowerOutputs::hubConfiguration;
 int PowerOutputs::pwmCounter;
 
+static float measurementBuffer[8*6];
+static uint8_t measurementBufferHead;
+
 bool PowerOutputs::pwmState(const HubConfiguration::State& state, int output) {
     if ((state.relayIsOpenBits & (1 << output)) == 0) {
         return false;
@@ -48,15 +51,34 @@ bool PowerOutputs::pwmState(const HubConfiguration::State& state, int output) {
 void PowerOutputs::init(HubConfiguration* hubConfiguration) {
     PowerOutputs::hubConfiguration = hubConfiguration;
     pwmCounter = 0;
+    memset(measurementBuffer, 0, 8*6*sizeof(float));
 }
 
 void PowerOutputs::loop() {
     pwmCounter = (pwmCounter + 1) % 20;
     if (pwmCounter == 0) {
         AnalogInput::resetAverageCollectingPeriod();
+        measurementBufferHead = (measurementBufferHead + 1) & 0x7;
+        for (int i = 0; i < 6; i++) {
+            measurementBuffer[measurementBufferHead*8+i] = getOutputPower(i);
+        }
     }
     tripFusesIfNecessary();
     updatePowerOutputs();
+}
+
+bool PowerOutputs::isInOverload(int output, int numSamplesToCheck) {
+    const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
+
+    int p = measurementBufferHead;
+    for (int i = 0; i < numSamplesToCheck; i++) {
+        if (measurementBuffer[p*6 + output] < outputSettings.outputs[output].fuseCurrent/10.0f) {
+            return false;
+        }
+        p = (p - 1) & 0x7;
+    }
+
+    return true;
 }
 
 void PowerOutputs::updatePowerOutputs() {
@@ -85,11 +107,11 @@ void PowerOutputs::updatePowerOutputs() {
 }
 
 void PowerOutputs::tripFusesIfNecessary() {
-    const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
+    const HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
     HubConfiguration::State& state = hubConfiguration->getState();
     uint8_t oldFuseIsBlownBits = state.fuseIsBlownBits;
     for (int output = 0; output < 6; output++) {
-        if (getOutputPower(output) > outputSettings.outputs[output].fuseCurrent/10.0f) {
+        if (isInOverload(output, factoryConfig.fuseDelay/10)) {
             state.fuseIsBlownBits |= (1 << output);
         }
     }

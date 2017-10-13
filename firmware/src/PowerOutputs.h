@@ -37,6 +37,7 @@ private:
     static bool pwmState(const HubConfiguration::State& state, int output);
     static void tripFusesIfNecessary();
     static void updatePowerOutputs();
+    static bool isInOverload(int output, int numSamplesToCheck);
 
 private:
     static class HubConfiguration* hubConfiguration;
