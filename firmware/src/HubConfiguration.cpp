@@ -21,6 +21,13 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/* EEPROM ADDRESS LAYOUT
+ *
+ * 0x0000 - 32 bytes - Factory Configuration (changed rarely)
+ * 0x0020 - 128 bytes - Output settings, 21 bytes per output (6)
+ * 0x00A0 - 864 bytes - Windowed area for Hub State (switches, fuses etc)
+ */
+
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "HubConfiguration.h"
