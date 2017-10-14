@@ -88,7 +88,7 @@ public:
     void saveState();
     void saveOutputConfiguration();
     void saveFactoryConfig();
-    void factoryReset(int serialNumber, int r6ohms, int r7ohms);
+    void factoryReset(int serialNumber, int r6ohms, int r7ohms, uint8_t boardRevision);
 
     HubConfiguration::FactoryConfig& getFactoryConfig();
     HubConfiguration::OutputSettings& getOutputSettings();
