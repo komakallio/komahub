@@ -41,7 +41,7 @@ public:
         float r6r7divisor;
         uint8_t fuseDelay;
         uint8_t skyQualityOffset;
-        
+
         struct Features {
             uint8_t tempprobes:1;
             uint8_t skyquality:1;
@@ -49,7 +49,7 @@ public:
             uint8_t skytemp:1;
             uint8_t reserved:4;
         } features;
-        
+
         uint8_t boardRevision;
         // max 32 bytes
     } __attribute__((__packed__));
