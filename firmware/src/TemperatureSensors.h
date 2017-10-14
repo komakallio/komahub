@@ -26,15 +26,17 @@
 
 class TemperatureSensors {
 public:
-    static void init();
+    static void init(class HubConfiguration* hubConfiguration);
     static void loop();
 
-    static int getCurrentTemperatureValues(float *dst, int maxSize);
+    static const float* getCurrentTemperatureValues();
+    static int getNumberOfSensors();
 
 private:
     static float temperatures[4];
     static int numberOfSensors;
     static bool temperaturesRequested;
+    static class HubConfiguration* hubConfiguration;
 };
 
 #endif

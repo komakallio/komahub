@@ -30,8 +30,11 @@
 #include "AnalogInput.h"
 #include "HubConfiguration.h"
 #include "PowerOutputs.h"
+#include "SkyTemperature.h"
+#include "TemperatureSensors.h"
 #include "USB.h"
 #include "USBCommands.h"
+#include "Weather.h"
 #include "Version.h"
 #include "VoltageMonitor.h"
 
@@ -226,6 +229,18 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 ConfigureSettingsCommand* cmd = (ConfigureSettingsCommand*)&data[pos];
                 factoryConfig.fuseDelay = cmd->fuseDelay;
                 factoryConfig.skyQualityOffset = cmd->skyQualityOffset;
+
+                if (factoryConfig.features.skyquality && !cmd->featureSkyQuality)
+                    SQM::stop();
+                if (!factoryConfig.features.tempprobes && cmd->featureTempProbe)
+                    TemperatureSensors::init(hubConfiguration);
+                if (!factoryConfig.features.skyquality && cmd->featureSkyQuality)
+                    SQM::init(hubConfiguration);
+                if (!factoryConfig.features.skytemp && cmd->featureSkyTemperature)
+                    SkyTemperature::init(hubConfiguration);
+                if (!factoryConfig.features.ambientpth && cmd->featureAmbientPTH)
+                    Weather::init(hubConfiguration);
+
                 factoryConfig.features.tempprobes = cmd->featureTempProbe;
                 factoryConfig.features.skyquality = cmd->featureSkyQuality;
                 factoryConfig.features.ambientpth = cmd->featureAmbientPTH;

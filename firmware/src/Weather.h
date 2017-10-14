@@ -26,7 +26,7 @@
 
 class Weather {
 public:
-    static void init();
+    static void init(class HubConfiguration* hubConfiguration);
     static void loop();
 
     static float getTemperature();
@@ -35,6 +35,8 @@ public:
     static float getDewPoint();
 
 private:
+    static class HubConfiguration* hubConfiguration;
+
     static float temperature;
     static float pressure;
     static float humidity;

@@ -69,20 +69,16 @@ void setup() {
 
     VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
-/*
-    if (configuration.getFactoryConfig().features.sqm) {
-        SQM::init(&configuration);
-        taskScheduler.addTask(sqmTask);
-    }
-    if (configuration.getFactoryConfig().features.onewire) {
-        TemperatureSensors::init();
-        taskScheduler.addTask(temperatureSensorsTask);
-    }
-    if (configuration.getFactoryConfig().features.bme280) {
-        Weather::init();
-        taskScheduler.addTask(weatherTask);
-    }
-*/
+
+    SQM::init(&configuration);
+    taskScheduler.addTask(sqmTask);
+
+    TemperatureSensors::init(&configuration);
+    taskScheduler.addTask(temperatureSensorsTask);
+
+    Weather::init(&configuration);
+    taskScheduler.addTask(weatherTask);
+
     taskScheduler.enableAll();
 }
 

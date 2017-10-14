@@ -35,12 +35,15 @@ HubConfiguration* SQM::hubConfiguration;
 
 void SQM::init(HubConfiguration* hubConfiguration) {
     SQM::hubConfiguration = hubConfiguration;
+    SQM::freq = 0;
+
+    if (!hubConfiguration->getFactoryConfig().features.skyquality)
+        return;
 
     pinMode(KomaHub::AUX1, INPUT);
     pinMode(KomaHub::AUX1_2, INPUT);
 
     switchToCount();
-    SQM::freq = 0;
 }
 
 void SQM::stop() {
@@ -61,6 +64,9 @@ void SQM::switchToCount() {
 }
 
 void SQM::loop() {
+    if (!hubConfiguration->getFactoryConfig().features.skyquality)
+        return;
+
     switch (SQM::mode) {
         case MEASURE:
         {
@@ -70,7 +76,7 @@ void SQM::loop() {
             if (freq > 1500) {
                 switchToCount();
             }
-            break;            
+            break;
         }
         case COUNT:
         {
@@ -92,4 +98,3 @@ int SQM::getFrequencyHz() {
 float SQM::getSQM() {
     return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
 }
-

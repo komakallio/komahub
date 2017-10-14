@@ -22,23 +22,34 @@
  */
 
 #include <Adafruit_BME280.h>
+#include "HubConfiguration.h"
 #include "Weather.h"
 
 static Adafruit_BME280 bme;
+
+HubConfiguration* Weather::hubConfiguration;
 
 float Weather::temperature;
 float Weather::pressure;
 float Weather::humidity;
 
-void Weather::init() {
+void Weather::init(HubConfiguration* hubConfiguration) {
+    Weather::hubConfiguration = hubConfiguration;
+
     temperature = 0;
     pressure = 0;
     humidity = 0;
+
+    if (!hubConfiguration->getFactoryConfig().features.skyquality)
+        return;
 
     bme.begin();
 }
 
 void Weather::loop() {
+    if (!hubConfiguration->getFactoryConfig().features.ambientpth)
+        return;
+
     temperature = bme.readTemperature();
     pressure = bme.readPressure();
     humidity = bme.readHumidity();

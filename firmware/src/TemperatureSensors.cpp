@@ -23,6 +23,7 @@
 
 #include <DallasTemperature.h>
 #include <OneWire.h>
+#include "HubConfiguration.h"
 #include "KomaHubPins.h"
 #include "TemperatureSensors.h"
 
@@ -32,8 +33,14 @@ static DallasTemperature sensors(&oneWire);
 int TemperatureSensors::numberOfSensors = 0;
 float TemperatureSensors::temperatures[4] = {0};
 bool TemperatureSensors::temperaturesRequested = false;
+HubConfiguration* TemperatureSensors::hubConfiguration;
 
-void TemperatureSensors::init() {
+void TemperatureSensors::init(HubConfiguration* hubConfiguration) {
+    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
+        return;
+
+    TemperatureSensors::hubConfiguration = hubConfiguration;
+
     temperaturesRequested = false;
     sensors.begin();
     sensors.setWaitForConversion(false);
@@ -41,6 +48,9 @@ void TemperatureSensors::init() {
 }
 
 void TemperatureSensors::loop() {
+    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
+        return;
+
     if (temperaturesRequested) {
         for (int i = 0; i < numberOfSensors; i++) {
             temperatures[i] = sensors.getTempCByIndex(i);
@@ -51,10 +61,10 @@ void TemperatureSensors::loop() {
     temperaturesRequested = true;
 }
 
-int TemperatureSensors::getCurrentTemperatureValues(float *dst, int maxSize) {
-    int i;
-    for (i = 0; i < numberOfSensors && i < maxSize; i++) {
-        *dst++ = temperatures[i];
-    }
-    return i;
+const float* TemperatureSensors::getCurrentTemperatureValues() {
+    return temperatures;
+}
+
+int TemperatureSensors::getNumberOfSensors() {
+    return numberOfSensors;
 }
