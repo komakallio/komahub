@@ -73,7 +73,7 @@ struct GetStatusResponse {
 
 struct UpdateSettingsCommand {
     uint8_t features;
-    uint8_t sqmzeropoint;
+    uint8_t SkyQualityzeropoint;
     uint8_t fusespeed;
 } __attribute__((__packed__));
 

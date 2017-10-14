@@ -27,15 +27,15 @@
 
 #include "HubConfiguration.h"
 #include "KomaHubPins.h"
-#include "SQM.h"
+#include "SkyQuality.h"
 
-SQM::Mode SQM::mode = COUNT;
-int SQM::freq = 0;
-HubConfiguration* SQM::hubConfiguration;
+SkyQuality::Mode SkyQuality::mode = COUNT;
+int SkyQuality::freq = 0;
+HubConfiguration* SkyQuality::hubConfiguration;
 
-void SQM::init(HubConfiguration* hubConfiguration) {
-    SQM::hubConfiguration = hubConfiguration;
-    SQM::freq = 0;
+void SkyQuality::init(HubConfiguration* hubConfiguration) {
+    SkyQuality::hubConfiguration = hubConfiguration;
+    SkyQuality::freq = 0;
 
     if (!hubConfiguration->getFactoryConfig().features.skyquality)
         return;
@@ -46,28 +46,28 @@ void SQM::init(HubConfiguration* hubConfiguration) {
     switchToCount();
 }
 
-void SQM::stop() {
+void SkyQuality::stop() {
     FreqMeasure.end();
     FreqCount.end();
 }
 
-void SQM::switchToMeasure() {
+void SkyQuality::switchToMeasure() {
     FreqMeasure.begin();
     FreqCount.end();
-    SQM::mode = MEASURE;
+    SkyQuality::mode = MEASURE;
 }
 
-void SQM::switchToCount() {
+void SkyQuality::switchToCount() {
     FreqCount.begin(1000);
     FreqMeasure.end();
-    SQM::mode = COUNT;
+    SkyQuality::mode = COUNT;
 }
 
-void SQM::loop() {
+void SkyQuality::loop() {
     if (!hubConfiguration->getFactoryConfig().features.skyquality)
         return;
 
-    switch (SQM::mode) {
+    switch (SkyQuality::mode) {
         case MEASURE:
         {
             if (FreqMeasure.available()) {
@@ -91,10 +91,10 @@ void SQM::loop() {
     }
 }
 
-int SQM::getFrequencyHz() {
+int SkyQuality::getFrequencyHz() {
     return freq;
 }
 
-float SQM::getSQM() {
+float SkyQuality::getSkyQuality() {
     return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
 }

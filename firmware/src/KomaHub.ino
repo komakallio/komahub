@@ -31,10 +31,9 @@
 #endif
 
 #include "AnalogInput.h"
-#include "Config.h"
 #include "HubConfiguration.h"
 #include "PowerOutputs.h"
-#include "SQM.h"
+#include "SkyQuality.h"
 #include "TemperatureSensors.h"
 #include "USB.h"
 #include "Weather.h"
@@ -45,7 +44,7 @@ static HubConfiguration configuration;
 #ifdef CORE_TEENSY_RAWHID
 static Task usbTask(10, TASK_FOREVER, &USB::loop);
 #endif
-static Task sqmTask(1000, TASK_FOREVER, &SQM::loop);
+static Task skyQualityTask(1000, TASK_FOREVER, &SkyQuality::loop);
 static Task analogInputTask(10, TASK_FOREVER, &AnalogInput::loop);
 static Task powerOutputsTask(5, TASK_FOREVER, &PowerOutputs::loop);
 static Task temperatureSensorsTask(2000, TASK_FOREVER, &TemperatureSensors::loop);
@@ -70,8 +69,8 @@ void setup() {
     VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
 
-    SQM::init(&configuration);
-    taskScheduler.addTask(sqmTask);
+    SkyQuality::init(&configuration);
+    taskScheduler.addTask(skyQualityTask);
 
     TemperatureSensors::init(&configuration);
     taskScheduler.addTask(temperatureSensorsTask);

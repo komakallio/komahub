@@ -23,7 +23,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
-#include <SQM.h>
+#include <SkyQuality.h>
 
 #ifdef CORE_TEENSY_RAWHID
 
@@ -127,8 +127,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 response.humidity = Weather::getHumidity();
                 response.pressure = Weather::getPressure();
                 response.dewpoint = Weather::getDewPoint();
-                // sqm
-                response.skyquality = SQM::getSQM();
+                // SkyQuality
+                response.skyquality = SkyQuality::getSkyQuality();
 
                 memcpy(usbSendBuffer, &response, sizeof(GetStatusResponse));
                 RawHID.send(usbSendBuffer, 1000);
@@ -231,11 +231,11 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 factoryConfig.skyQualityOffset = cmd->skyQualityOffset;
 
                 if (factoryConfig.features.skyquality && !cmd->featureSkyQuality)
-                    SQM::stop();
+                    SkyQuality::stop();
                 if (!factoryConfig.features.tempprobes && cmd->featureTempProbe)
                     TemperatureSensors::init(hubConfiguration);
                 if (!factoryConfig.features.skyquality && cmd->featureSkyQuality)
-                    SQM::init(hubConfiguration);
+                    SkyQuality::init(hubConfiguration);
                 if (!factoryConfig.features.skytemp && cmd->featureSkyTemperature)
                     SkyTemperature::init(hubConfiguration);
                 if (!factoryConfig.features.ambientpth && cmd->featureAmbientPTH)

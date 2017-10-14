@@ -21,6 +21,30 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef SkyQuality_H
+#define SkyQuality_H
 
-#define HAVE_SQM
+class SkyQuality {
+public:
+    static void init(class HubConfiguration* hubConfiguration);
+    static void loop();
+    static void stop();
 
+    static int getFrequencyHz();
+    static float getSkyQuality();
+
+private:
+    static void switchToCount();
+    static void switchToMeasure();
+
+private:
+    static enum Mode {
+        COUNT,
+        MEASURE
+    } mode;
+
+    static int freq;
+    static class HubConfiguration* hubConfiguration;
+};
+
+#endif
