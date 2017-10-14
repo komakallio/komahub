@@ -100,22 +100,34 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case GETSTATUS: {
-                uint8_t *dst = &usbSendBuffer[0];
+                GetStatusResponse response;
+
                 const HubConfiguration::State& state = hubConfiguration->getState();
-                *dst++ = state.relayIsOpenBits;
-                *dst++ = state.fuseIsBlownBits;
+                response.relayIsOpenBits = state.relayIsOpenBits;
+                response.fuseIsBlownBits = state.fuseIsBlownBits;
                 for (int i = 0; i < 6; i++) {
-                    *dst++ = state.pwmPercentages[i];
+                    response.pwmPercentages[i] = state.pwmPercentages[i];
                 }
-                // voltage
-                *dst++ = (uint8_t)roundf(VoltageMonitor::getInputVoltage() * 10);
-                // amps
+                // input voltage
+                response.inputVoltage = (uint8_t)roundf(VoltageMonitor::getInputVoltage() * 10);
+                // output power, amps
                 for (int i = 0; i < 6; i++) {
-                    *dst++ = (uint8_t)roundf(PowerOutputs::getOutputPower(i) * 10);
+                    response.outputPower[i] = (uint8_t)roundf(PowerOutputs::getOutputPower(i) * 10);
                 }
                 // temperatures
+                response.numberOfTemperatureProbes = TemperatureSensors::getNumberOfSensors();
+                for (int i = 0; i < 4; i++) {
+                    response.temperatureProbes[i] = TemperatureSensors::getCurrentTemperatureValues()[i] * 10;
+                }
                 // weather
+                response.temperature = Weather::getTemperature();
+                response.humidity = Weather::getHumidity();
+                response.pressure = Weather::getPressure();
+                response.dewpoint = Weather::getDewPoint();
                 // sqm
+                response.skyquality = SQM::getSQM();
+
+                memcpy(usbSendBuffer, &response, sizeof(GetStatusResponse));
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }

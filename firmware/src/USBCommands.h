@@ -56,6 +56,21 @@ struct GetOutputSettingsCommand {
     uint8_t outputNumber;
 } __attribute__((__packed__));
 
+struct GetStatusResponse {
+    uint8_t relayIsOpenBits; // 1 = enabled, 0 = disabled
+    uint8_t fuseIsBlownBits; // 1 = blown, 0 = not blown
+    uint8_t pwmPercentages[6]; // 0-100
+    uint8_t inputVoltage; // *10, 120 = 12.0V
+    uint8_t outputPower[6]; // *10, 50 = 5.0A
+    uint8_t numberOfTemperatureProbes;
+    int16_t temperatureProbes[4]; // *10, -35 = -3.5 degrees Celsius
+    int16_t temperature; // *10, -35 = -3.5 degrees Celsius
+    int16_t dewpoint; // *10, -35 = -3.5 degrees Celsius
+    uint8_t humidity; // 0-100 (%)
+    uint16_t pressure; // *10, 10005 = 1000.5 hPa
+    uint8_t skyquality; // *10, 210 = 21.0 mag/arcsec^2
+} __attribute__((__packed__));
+
 struct UpdateSettingsCommand {
     uint8_t features;
     uint8_t sqmzeropoint;
