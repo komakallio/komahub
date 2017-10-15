@@ -22,14 +22,13 @@
  */
 
 #include <Arduino.h>
-#include <EEPROM.h>
-#include <SkyQuality.h>
 
 #ifdef CORE_TEENSY_RAWHID
 
 #include "AnalogInput.h"
 #include "HubConfiguration.h"
 #include "PowerOutputs.h"
+#include "SkyQuality.h"
 #include "SkyTemperature.h"
 #include "TemperatureSensors.h"
 #include "USB.h"
@@ -65,38 +64,36 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
             }
 
             case GETFACTORYSETTINGS: {
-                uint8_t *dst = &usbSendBuffer[0];
-                *dst++ = KOMAHUB_FIRMWARE_VERSION_MAJOR;
-                *dst++ = KOMAHUB_FIRMWARE_VERSION_MINOR;
                 const HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
+                GetFactorySettingsResponse response;
 
-                *dst++ = (factoryConfig.serial & 0xFF00) >> 8;
-                *dst++ = factoryConfig.serial & 0xFF;
-                *dst++ = factoryConfig.fuseDelay;
-                *dst++ = factoryConfig.skyQualityOffset;
-                *dst++ = (uint8_t)(
+                response.firmwareVersion = (KOMAHUB_FIRMWARE_VERSION_MAJOR << 8) + KOMAHUB_FIRMWARE_VERSION_MINOR;
+                response.serialNumber = factoryConfig.serial;
+                response.fuseDelay = factoryConfig.fuseDelay;
+                response.skyQualityOffset = factoryConfig.skyQualityOffset;
+                response.features = (uint8_t)(
                     (factoryConfig.features.tempprobes ? (1 << 0) : 0) +
                     (factoryConfig.features.skyquality ? (1 << 1) : 0) +
                     (factoryConfig.features.ambientpth ? (1 << 2) : 0) +
                     (factoryConfig.features.skytemp ? (1 << 3) : 0));
-                *dst++ = factoryConfig.boardRevision;
+                response.boardRevision = factoryConfig.boardRevision;
+
+                memcpy(usbSendBuffer, &response, sizeof(GetFactorySettingsResponse));
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
 
             case GETOUTPUTSETTINGS: {
                 GetOutputSettingsCommand* cmd = (GetOutputSettingsCommand*)&data[pos];
-                int output = cmd->outputNumber;
+                GetOutputSettingsResponse response;
 
-                uint8_t *dst = &usbSendBuffer[0];
                 const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
+                const HubConfiguration::Output& output = outputSettings.outputs[cmd->outputNumber];
+                memcpy(&response.name, output.name, 16);
+                response.fuseCurrent = output.fuseCurrent;
+                response.type = output.type.type;
 
-                for (unsigned int i = 0; i < 16; i++)  {
-                    *dst++ = outputSettings.outputs[output].name[i];
-                }
-                *dst++ = outputSettings.outputs[output].fuseCurrent;
-                *dst++ = outputSettings.outputs[output].type.type;
-
+                memcpy(usbSendBuffer, &response, sizeof(GetOutputSettingsResponse));
                 RawHID.send(usbSendBuffer, 1000);
                 pos += sizeof(GetOutputSettingsCommand);
                 break;
@@ -135,32 +132,10 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 break;
             }
 
-            case GETPOWERUSAGE: {
-                const uint16_t *inputValues = AnalogInput::getAverageValues();
-                memcpy(usbSendBuffer, inputValues, 8*sizeof(uint16_t));
-                RawHID.send(usbSendBuffer, 1000);
-                break;
-            }
-
-            case DUMPFACTORY: {
-                uint8_t *dst = usbSendBuffer;
-                for (unsigned int i = 0; i < sizeof(HubConfiguration::FactoryConfig); i++)
-                    *dst++ = EEPROM.read(i);
-                RawHID.send(usbSendBuffer, 1000);
-                break;
-            }
-            case DUMPOUTPUTS: {
-                uint8_t *dst = usbSendBuffer;
-                for (unsigned int i = 0; i < 64; i++)
-                    *dst++ = EEPROM.read(i + 32);
-                RawHID.send(usbSendBuffer, 1000);
-                break;
-            }
-            case DUMPSTATE: {
-                uint8_t *dst = usbSendBuffer;
-                uint8_t *src = (uint8_t*)&hubConfiguration->getState();
-                for (unsigned int i = 0; i < sizeof(HubConfiguration::State); i++)
-                    *dst++ = src[i];
+            case GETRAWPOWERUSAGE: {
+                GetRawPowerUsageResponse response;
+                memcpy(&response.rawValues, AnalogInput::getAverageValues(), 8*sizeof(uint16_t));
+                memcpy(usbSendBuffer, &response, sizeof(GetRawPowerUsageResponse));
                 RawHID.send(usbSendBuffer, 1000);
                 break;
             }
@@ -171,6 +146,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(FactoryResetCommand);
                 break;
             }
+
             case REBOOT_BOOTLOADER: {
                 cli();
                 // disable watchdog, if enabled
@@ -186,6 +162,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 asm volatile("jmp 0x7000");
                 break;
             }
+
             case SETRELAY: {
                 SetRelayCommand* cmd = (SetRelayCommand*)&data[pos];
                 if (cmd->enabled) {
@@ -197,6 +174,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(SetRelayCommand);
                 break;
             }
+
             case SETPWMDUTY: {
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
@@ -204,6 +182,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(SetPwmDutyCommand);
                 break;
             }
+
             case RESETFUSE: {
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
                 hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
@@ -212,6 +191,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(ResetFuseCommand);
                 break;
             }
+
             case CONFIGUREOUTPUT: {
                 HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
 
@@ -223,6 +203,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(ConfigureOutputCommand);
                 break;
             }
+
             case CONFIGURESETTINGS: {
                 HubConfiguration::FactoryConfig& factoryConfig = hubConfiguration->getFactoryConfig();
 
@@ -250,6 +231,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 pos += sizeof(ConfigureSettingsCommand);
                 break;
             }
+
             case CALIBRATEOUTPUT: {
                 HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
 

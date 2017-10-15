@@ -30,20 +30,26 @@ enum USBCommand {
     GETFACTORYSETTINGS = 0x02,
     GETOUTPUTSETTINGS = 0x03,
     GETSTATUS = 0x04,
-    GETPOWERUSAGE = 0x05,
+    GETRAWPOWERUSAGE = 0x05,
     SETRELAY = 0x10,
     SETPWMDUTY = 0x11,
     RESETFUSE = 0x12,
     CONFIGUREOUTPUT = 0x13,
     CONFIGURESETTINGS = 0x14,
 
-    DUMPFACTORY = 0xF0,
-    DUMPOUTPUTS = 0xF1,
-    DUMPSTATE = 0xF2,
     FACTORYRESET = 0xFA,
     REBOOT_BOOTLOADER = 0xFB,
     CALIBRATEOUTPUT = 0xFC
 };
+
+struct GetFactorySettingsResponse {
+    uint16_t firmwareVersion;
+    uint16_t serialNumber;
+    uint8_t fuseDelay;
+    uint8_t skyQualityOffset;
+    uint8_t features;
+    uint8_t boardRevision;
+} __attribute__((__packed__));
 
 struct FactoryResetCommand {
     uint16_t serial;
@@ -54,6 +60,12 @@ struct FactoryResetCommand {
 
 struct GetOutputSettingsCommand {
     uint8_t outputNumber;
+} __attribute__((__packed__));
+
+struct GetOutputSettingsResponse {
+    char name[16];
+    uint8_t fuseCurrent;
+    uint8_t type;
 } __attribute__((__packed__));
 
 struct GetStatusResponse {
@@ -69,6 +81,10 @@ struct GetStatusResponse {
     uint8_t humidity; // 0-100 (%)
     uint16_t pressure; // *10, 10005 = 1000.5 hPa
     uint8_t skyquality; // *10, 210 = 21.0 mag/arcsec^2
+} __attribute__((__packed__));
+
+struct GetRawPowerUsageResponse {
+    uint16_t rawValues[8];
 } __attribute__((__packed__));
 
 struct UpdateSettingsCommand {
