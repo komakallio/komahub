@@ -34,7 +34,10 @@ class KomaHub:
         return map(lambda x:ord(x), data)
 
     def setRelay(self, output, enabled):
-        self.send([ord('K'), 16, output, 1 if enabled else 0])
+        self.send([ord('K'), 19, output, 1, 50, ord('O'), ord('u'), ord('t'), ord('p'), ord('u'), ord('t') , ord(' '), ord('0') + output+1]) # configure output to defaults
+        self.send([ord('K'), 18, output]) # reset fuse
+        self.send([ord('K'), 17, output, 100]) # set pwm to 100
+        self.send([ord('K'), 16, output, 1 if enabled else 0]) # enable output
 
     def measureCurrent(self, output):
         self.send([ord('K'), 5])
