@@ -38,7 +38,7 @@ def factorysettings():
             'firmwareMajor' : ord(data[0]),
             'firmwareMinor' : ord(data[1]),
 #            'numberOfOutputs' : ord(data[2]),
-            'serial' : ord(data[2]) * 256 + ord(data[3])
+            'serial' : ord(data[3]) * 256 + ord(data[2])
 #            'relayIsOpen' : ord(data[5]),
 #            'fuseIsBlown' : ord(data[6]),
 #            'relayIsPwm' : ord(data[7]),
