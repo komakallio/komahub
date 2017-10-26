@@ -168,7 +168,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 if (cmd->enabled) {
                     hubConfiguration->getState().relayIsOpenBits |= (1 << cmd->outputNumber);
                 } else {
-                    hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
+                    hubConfiguration->getState().relayIsOpenBits &= ~(1 << cmd->outputNumber);
                 }
                 hubConfiguration->saveState();
                 pos += sizeof(SetRelayCommand);
@@ -185,8 +185,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case RESETFUSE: {
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
-                hubConfiguration->getState().fuseIsBlownBits &= !(1 << cmd->outputNumber);
-                hubConfiguration->getState().relayIsOpenBits &= !(1 << cmd->outputNumber);
+                hubConfiguration->getState().fuseIsBlownBits &= ~(1 << cmd->outputNumber);
+                hubConfiguration->getState().relayIsOpenBits &= ~(1 << cmd->outputNumber);
                 hubConfiguration->saveState();
                 pos += sizeof(ResetFuseCommand);
                 break;
