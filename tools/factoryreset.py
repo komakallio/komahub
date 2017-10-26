@@ -38,4 +38,4 @@ def factoryreset(serial, r6ohms, r7ohms, boardrevision):
 
 if __name__ == '__main__':
     (serial, r6ohms, r7ohms, boardrevision) = cmdlineargs(sys.argv)
-    factoryreset(serial, r6ohms, r7ohms)
+    factoryreset(serial, r6ohms, r7ohms, boardrevision)
