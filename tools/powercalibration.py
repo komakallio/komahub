@@ -80,6 +80,7 @@ def measure(komahub, loadGenerator, output):
             load += 10 if load < 500 else 100
             sys.stdout.write('.')
             sys.stdout.flush()
+        komahub.setRelay(output-1, False)
     finally:
         print
         loadGenerator.setLoad(0)
