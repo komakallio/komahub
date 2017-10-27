@@ -60,7 +60,7 @@ void PowerOutputs::loop() {
         AnalogInput::resetAverageCollectingPeriod();
         measurementBufferHead = (measurementBufferHead + 1) & 0x7;
         for (int i = 0; i < 6; i++) {
-            measurementBuffer[measurementBufferHead*8+i] = getOutputPower(i);
+            measurementBuffer[measurementBufferHead*6+i] = getOutputPower(i);
         }
     }
     tripFusesIfNecessary();
