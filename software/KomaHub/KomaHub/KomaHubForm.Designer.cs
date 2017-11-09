@@ -28,6 +28,7 @@ namespace KomaHub
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KomaHubForm));
             this.buttonRelay1 = new System.Windows.Forms.Button();
             this.output1Name = new System.Windows.Forms.Label();
             this.groupBoxRelayControl = new System.Windows.Forms.GroupBox();
@@ -936,6 +937,7 @@ namespace KomaHub
             this.ClientSize = new System.Drawing.Size(818, 896);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "KomaHubForm";
             this.Text = "KomaHub";
