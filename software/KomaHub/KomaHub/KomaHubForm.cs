@@ -23,6 +23,7 @@ namespace KomaHub
         private BackgroundWorker backgroundWorker = new BackgroundWorker();
         private BackgroundWorker statusWorker = new BackgroundWorker();
         private KomaHubHID komaHub = new KomaHubHID();
+        private bool disableUpdates = false;
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
@@ -115,7 +116,9 @@ namespace KomaHub
             pwmDuty.Visible = (uiState.Outputs[output].type == KomahubOutput.OutputType.PWM);
             int index = 20 - uiState.Status.pwmDuty[output] / 5;
             if (index == 20) index = 19;
+            disableUpdates = true;
             pwmDuty.SelectedIndex = index;
+            disableUpdates = false;
             button.Enabled = Connected;
 
             if (!Connected)
@@ -262,36 +265,48 @@ namespace KomaHub
 
         private void pwmDuty1_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[0] = (byte)(100 - pwmDuty1.SelectedIndex * 5);
             komaHub.setPwmDuty(0, uiState.Status.pwmDuty[0]);
         }
 
         private void pwmDuty2_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[1] = (byte)(100 - pwmDuty2.SelectedIndex * 5);
             komaHub.setPwmDuty(1, uiState.Status.pwmDuty[1]);
         }
 
         private void pwmDuty3_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[2] = (byte)(100 - pwmDuty3.SelectedIndex * 5);
             komaHub.setPwmDuty(2, uiState.Status.pwmDuty[2]);
         }
 
         private void pwmDuty4_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[3] = (byte)(100 - pwmDuty4.SelectedIndex * 5);
             komaHub.setPwmDuty(3, uiState.Status.pwmDuty[3]);
         }
 
         private void pwmDuty5_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[4] = (byte)(100 - pwmDuty5.SelectedIndex * 5);
             komaHub.setPwmDuty(4, uiState.Status.pwmDuty[4]);
         }
 
         private void pwmDuty6_SelectedItemChanged(object sender, EventArgs e)
         {
+            if (disableUpdates)
+                return;
             uiState.Status.pwmDuty[5] = (byte)(100 - pwmDuty6.SelectedIndex * 5);
             komaHub.setPwmDuty(5, uiState.Status.pwmDuty[5]);
         }
