@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace KomaHub
 {
@@ -68,7 +70,7 @@ namespace KomaHub
 
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
+                send(report);
             }
         }
 
@@ -81,24 +83,55 @@ namespace KomaHub
 
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
+                send(report);
             }
         }
 
         public KomahubFactorySettings readFactorySettings()
         {
             byte[] report = new byte[64];
+            byte[] result = new byte[64];
             report[0] = KOMAHUB_MAGIC;
             report[1] = Commands.GetFactorySettings;
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
-                rawhid_recv(0, report, 64, 500);
+                send(report);
+                recv(result);
             }
             KomahubFactorySettings factorySettings = new KomahubFactorySettings();
-            factorySettings.FirmwareVersion = (report[0] << 8) + report[1];
-            factorySettings.SerialNumber = (report[2] << 8) + report[3];
+            factorySettings.FirmwareVersion = (result[0] << 8) + result[1];
+            factorySettings.SerialNumber = (result[3] << 8) + result[2];
             return factorySettings;
+        }
+
+        private void send(byte[] buffer)
+        {
+            int success = rawhid_send(0, buffer, 64, 100);
+            switch (success) {
+                case 0:
+                    MessageBox.Show("Communications Timeout");
+                    break;
+                case -1:
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                default:
+                    break;
+            }
+        }
+
+        private void recv(byte[] buffer)
+        {
+            int success = rawhid_recv(0, buffer, 64, 500);
+            switch (success)
+            {
+                case 0:
+                    MessageBox.Show("Communications Timeout");
+                    break;
+                case -1:
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                default:
+                    break;
+            }
+
         }
 
         public KomahubStatus readStatus()
@@ -110,8 +143,8 @@ namespace KomaHub
 
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
-                rawhid_recv(0, result, 64, 500);
+                send(report);
+                recv(result);
             }
             KomahubStatus status = new KomahubStatus();
             status.relayIsOpen = new bool[6];
@@ -140,8 +173,8 @@ namespace KomaHub
 
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
-                rawhid_recv(0, result, 64, 500);
+                send(report);
+                recv(result);
             }
             KomahubOutput output = new KomahubOutput();
 
@@ -169,7 +202,7 @@ namespace KomaHub
 
             lock (hubLock) 
             {
-                rawhid_send(0, report, 64, 100);
+                send(report);
             }
         }
 
@@ -182,7 +215,7 @@ namespace KomaHub
             report[3] = (byte)duty;
             lock (hubLock)
             {
-                rawhid_send(0, report, 64, 100);
+                send(report);
             }
         }
     }
