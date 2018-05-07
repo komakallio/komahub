@@ -1,5 +1,4 @@
 import serial, sys, TeensyRawhid, time, numpy as np
-from pylab import *
 from scipy.optimize import curve_fit
 
 class OutputMeasurementError(BaseException):
