@@ -50,6 +50,12 @@ def factorysettings():
     else:
         raise IOError("No data received")
 
+def toint16(a, b):
+    value = ord(a) + ord(b)*256
+    if value >= 32768:
+        value = -(65536-value)
+    return value/10.0
+
 def status():
     data = query(0x04)
     if data and len(data) > 0:
@@ -59,6 +65,13 @@ def status():
             'pwmPercentages' : [ ord(data[2]), ord(data[3]), ord(data[4]), ord(data[5]), ord(data[6]), ord(data[7]) ],
             'inputVoltage' : float(ord(data[8])/10.0),
             'outputCurrents' : [ float(ord(data[9])/10.0), float(ord(data[10])/10.0), float(ord(data[11])/10.0), float(ord(data[12])/10.0), float(ord(data[13])/10.0), float(ord(data[14])/10.0) ],
+            'numTemperatureSensors' : ord(data[15]),
+            'temperatures' : [ toint16(data[16], data[17]), toint16(data[18], data[19]), toint16(data[20], data[21]), toint16(data[22], data[23]) ],
+            'temperature' : toint16(data[24], data[25]),
+            'dewpoint' : toint16(data[26], data[27]),
+            'humidity' : ord(data[28]),
+            'pressure' : toint16(data[29], data[30]),
+            'skyquality' : ord(data[31])
          }
     else:
         raise IOError("No data received")
@@ -74,3 +87,11 @@ if __name__ == '__main__':
             (' FUSE' if (data['fuseIsBlown'] & (1 << i)) != 0 else ''),
             (' %d%%' % data['pwmPercentages'][i]),
             data['outputCurrents'][i])
+    print 'Temperature: %1.1f C' % (data['temperature'])
+    print 'Dewpoint: %1.1f C' % (data['dewpoint'])
+    print 'Humidity: %1.1f%%' % data['humidity']
+    print 'Pressure: %1.1f hPa' % (data['humidity'])
+    print 'External temperature sensors: %d' % data['numTemperatureSensors']
+    for i in range(0, data['numTemperatureSensors']):
+        print 'Temperature %d: %1.1f C' % ((i+1), data['temperatures'][i])
+    print 'Sky quality: %1.1f mag/arcsec^2' % (data['skyquality'])
