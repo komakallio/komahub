@@ -152,7 +152,6 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 // disable watchdog, if enabled
                 // disable all peripherals
                 UDCON = 1;
-                USBCON = (1<<FRZCLK);  // disable USB
                 UCSR1B = 0;
                 delay(5);
                 EIMSK = 0; PCICR = 0; SPCR = 0; ACSR = 0; EECR = 0; ADCSRA = 0;
