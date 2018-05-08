@@ -69,14 +69,14 @@ void setup() {
     VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
 
-    SkyQuality::init(&configuration);
-    taskScheduler.addTask(skyQualityTask);
+//    SkyQuality::init(&configuration);
+//    taskScheduler.addTask(skyQualityTask);
 
     TemperatureSensors::init(&configuration);
     taskScheduler.addTask(temperatureSensorsTask);
 
-    Weather::init(&configuration);
-    taskScheduler.addTask(weatherTask);
+//    Weather::init(&configuration);
+//    taskScheduler.addTask(weatherTask);
 
     taskScheduler.enableAll();
 }
