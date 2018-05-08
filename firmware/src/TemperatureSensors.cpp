@@ -21,14 +21,14 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <DallasTemperature.h>
-#include <OneWire.h>
+#include <Arduino.h>
+#include <DS1620.h>
 #include "HubConfiguration.h"
 #include "KomaHubPins.h"
 #include "TemperatureSensors.h"
 
-static OneWire oneWire(KomaHub::AUX2);
-static DallasTemperature sensors(&oneWire);
+static DS1620 primarySensor(KomaHub::SS, KomaHub::SDA, KomaHub::SCL);
+static DS1620 secondarySensor(KomaHub::SCLK, KomaHub::MISO, KomaHub::MOSI);
 
 int TemperatureSensors::numberOfSensors = 0;
 float TemperatureSensors::temperatures[4] = {0};
@@ -36,28 +36,19 @@ bool TemperatureSensors::temperaturesRequested = false;
 HubConfiguration* TemperatureSensors::hubConfiguration;
 
 void TemperatureSensors::init(HubConfiguration* hubConfiguration) {
-    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
-        return;
-
     TemperatureSensors::hubConfiguration = hubConfiguration;
-
     temperaturesRequested = false;
-    sensors.begin();
-    sensors.setWaitForConversion(false);
-    numberOfSensors = min(4, sensors.getDeviceCount());
+    numberOfSensors = 2;
 }
 
 void TemperatureSensors::loop() {
-    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
-        return;
-
     if (temperaturesRequested) {
-        for (int i = 0; i < numberOfSensors; i++) {
-            temperatures[i] = sensors.getTempCByIndex(i);
-        }
+        temperatures[0] = primarySensor.getTemperature();
+        temperatures[1] = secondarySensor.getTemperature();
     }
 
-    sensors.requestTemperatures();
+    primarySensor.startConversion();
+    secondarySensor.startConversion();
     temperaturesRequested = true;
 }
 
