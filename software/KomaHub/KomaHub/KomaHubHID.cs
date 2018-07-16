@@ -134,6 +134,14 @@ namespace KomaHub
 
         }
 
+        private Int16 toInt16(byte a, byte b)
+        {
+            int value = a + 256 * b;
+            if (value >= 32768)
+                value = -(65536 - value);
+            return (Int16)value;
+        }
+
         public KomahubStatus readStatus()
         {
             byte[] report = new byte[64];
@@ -159,6 +167,12 @@ namespace KomaHub
                 status.outputCurrent[output] = result[2 + 6 + 1 + output] / 10.0f;
             }
             status.inputVoltage = result[2 + 6] / 10.0f;
+
+            status.numberOfTemperatures = result[2 + 6 + 1 + 6];
+            for (int sensor = 0; sensor < status.numberOfTemperatures; sensor++)
+            {
+                status.temperatures[sensor] = toInt16(result[2 + 6 + 1 + 6 + 1 + sensor * 2 + 0], result[2 + 6 + 1 + 6 + 1 + sensor * 2 + 1]) / 10.0f;
+            }
 
             return status;
         }

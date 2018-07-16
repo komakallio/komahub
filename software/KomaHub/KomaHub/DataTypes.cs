@@ -32,6 +32,8 @@ namespace KomaHub
         public float externalTemperature;
         public float skyTemperature;
         public float skyTemperatureAmbient;
+        public int numberOfTemperatures;
+        public float[] temperatures = new float[4];
         public float skyQuality;
     }
 
