@@ -175,12 +175,12 @@ namespace KomaHub
             this.labelExternalTemperature.Enabled = uiState.FactorySettings.featureTempProbe;
             this.labelExternalTemperatureTitle.Enabled = uiState.FactorySettings.featureTempProbe;
 
-            this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature);
-            this.labelSkyTemperature.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureDelta.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperatureAmbient - uiState.Status.skyTemperature);
-            this.labelSkyTemperatureDelta.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
+            this.labelSecondaryMirrorTemp.Text = string.Format("{0:F1} °C", uiState.Status.temperatures[1]);
+            this.labelSecondaryMirrorTemp.Enabled = uiState.Status.numberOfTemperatures > 1;
+            this.labelSkyTemperatureTitle.Enabled = uiState.Status.numberOfTemperatures > 1;
+            this.labelPrimaryMirrorTemp.Text = string.Format("{0:F1} °C", uiState.Status.temperatures[0]);
+            this.labelPrimaryMirrorTemp.Enabled = uiState.Status.numberOfTemperatures > 0;
+            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.Status.numberOfTemperatures > 0;
 
             this.labelSQM.Text = string.Format("{0:F2}", uiState.Status.skyQuality);
             this.labelSQM.Enabled = uiState.FactorySettings.featureSkyQuality;
