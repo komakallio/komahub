@@ -23,6 +23,7 @@ namespace KomaHub
         private BackgroundWorker backgroundWorker = new BackgroundWorker();
         private BackgroundWorker statusWorker = new BackgroundWorker();
         private KomaHubHID komaHub = new KomaHubHID();
+        private WebServer webServer;
         private bool disableUpdates = false;
 
         [DllImport("user32.dll")]
@@ -32,6 +33,8 @@ namespace KomaHub
         public KomaHubForm()
         {
             InitializeComponent();
+
+            webServer = new WebServer(this);
 
             var firmwarePos = new Point(216, 75);
             firmwareLabel.Parent = titlePictureBox;
@@ -90,6 +93,8 @@ namespace KomaHub
  
             Connected = true;
             StatusText = "Device Connected";
+
+            webServer.start();
         }
 
         private void UpdateStatus(object sender, DoWorkEventArgs args)
@@ -204,6 +209,20 @@ namespace KomaHub
             }
 
             this.uiState = newUiState;
+            Update(uiState);
+        }
+
+        public void enableRelay(int n)
+        {
+            uiState.Status.relayIsOpen[n] = true;
+            komaHub.setRelay(n, uiState.Status.relayIsOpen[n]);
+            Update(uiState);
+        }
+
+        public void disableRelay(int n)
+        {
+            uiState.Status.relayIsOpen[n] = false;
+            komaHub.setRelay(n, uiState.Status.relayIsOpen[n]);
             Update(uiState);
         }
 

@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WebServer.cs" />
     <Compile Include="DataTypes.cs" />
     <Compile Include="ISettingsReceiver.cs" />
     <Compile Include="KomaHubForm.cs">
