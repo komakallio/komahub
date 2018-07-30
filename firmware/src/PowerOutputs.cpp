@@ -28,6 +28,7 @@
 #include "KomaHubPins.h"
 #include "PowerOutputs.h"
 #include "USBCommands.h"
+#include "VersionSpecifics.h"
 
 #define PWM_CYCLE_COUNT 20
 
@@ -130,5 +131,6 @@ float PowerOutputs::getOutputPower(int outputNumber) {
     }
 
     // Approximate true power usage with a second-order function
-    return 0.001 * ((output.coeffs.a/1000.0)*adcValue*adcValue + output.coeffs.b*adcValue + output.coeffs.c);
+    float divisor = VersionSpecifics::getPowerOutputACoefficientDivisor();
+    return 0.001 * ((output.coeffs.a/divisor)*adcValue*adcValue + output.coeffs.b*adcValue + output.coeffs.c);
 }
