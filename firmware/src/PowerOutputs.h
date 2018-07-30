@@ -24,7 +24,7 @@
 #ifndef POWEROUTPUTS_H
 #define POWEROUTPUTS_H
 
-#include <HubConfiguration.h>
+#include "HubConfiguration.h"
 
 class PowerOutputs {
 public:
