@@ -83,6 +83,10 @@ def measure(komahub, loadGenerator, output):
     finally:
         print
         loadGenerator.setLoad(0)
+        time.sleep(1)
+        current = komahub.measureCurrent(output)
+	if current != 0:
+	    print 'WARNING: output did not turn off (%d)!' % current
     return (adc, amps)
 
 def fit(adc, amps):
