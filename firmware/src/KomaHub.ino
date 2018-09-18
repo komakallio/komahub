@@ -54,7 +54,7 @@ static Task voltageMonitorTask(10, TASK_FOREVER, &VoltageMonitor::loop);
 
 void setup() {
     configuration.loadStoredConfiguration();
-    VersionSpecifics::setFirmwareVersion(configuration.getFactoryConfig().boardRevision);
+    VersionSpecifics::setBoardRevision(configuration.getFactoryConfig().boardRevision);
 
     taskScheduler.init();
 #ifdef CORE_TEENSY_RAWHID

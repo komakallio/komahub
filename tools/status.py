@@ -38,7 +38,8 @@ def factorysettings():
             'firmwareMajor' : ord(data[0]),
             'firmwareMinor' : ord(data[1]),
 #            'numberOfOutputs' : ord(data[2]),
-            'serial' : ord(data[3]) * 256 + ord(data[2])
+            'serial' : ord(data[3]) * 256 + ord(data[2]),
+            'boardRevision' : (ord(data[7]) >> 4) + (ord(data[7]) & 0x3)/10.0
 #            'relayIsOpen' : ord(data[5]),
 #            'fuseIsBlown' : ord(data[6]),
 #            'relayIsPwm' : ord(data[7]),
@@ -79,7 +80,7 @@ def status():
 if __name__ == '__main__':
     settings = factorysettings()
     data = status()
-    print 'KomaHub v%s.%s, serial #%05d' % (settings['firmwareMajor'], settings['firmwareMinor'], settings['serial'])
+    print 'KomaHub v%s, firmware v%s.%s, serial #%05d' % (settings['boardRevision'], settings['firmwareMajor'], settings['firmwareMinor'], settings['serial'])
     print 'Input Voltage: %1.1fV' % data['inputVoltage']
     for i in range(0, 6):
         print 'Output %d: %s%s%s %1.1fA' % (i+1,

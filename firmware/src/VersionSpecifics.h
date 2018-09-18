@@ -24,14 +24,18 @@
 #ifndef VERSIONSPECIFICS_H
 #define VERSIONSPECIFICS_H
 
+#include <Arduino.h>
+
 class VersionSpecifics {
 public:
-    static void setFirmwareVersion(int version);
+    static void setBoardRevision(int revision);
     static float getPowerOutputACoefficientDivisor();
+    static int8_t getDefaultPowerOutputCoefficientA();
+    static uint8_t getDefaultPowerOutputCoefficientB();
+    static uint8_t getDefaultPowerOutputCoefficientC();
 
 private:
-    static int s_firmwareVersion;
+    static int s_boardRevision;
 };
-
 
 #endif

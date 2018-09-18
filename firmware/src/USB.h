@@ -32,6 +32,7 @@ public:
 private:
     static void handleCommands(uint8_t* data, unsigned int len);
     static void handlePacket(uint8_t* buffer);
+    static bool isValidOutput(int output);
 
 private:
     static class HubConfiguration* hubConfiguration;

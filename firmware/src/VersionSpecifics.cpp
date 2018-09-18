@@ -23,17 +23,44 @@
 
 #include "VersionSpecifics.h"
 
-int VersionSpecifics::s_firmwareVersion = 0x10;
+int VersionSpecifics::s_boardRevision = 0x10;
 
-void VersionSpecifics::setFirmwareVersion(int version) {
-    s_firmwareVersion = version;
+void VersionSpecifics::setBoardRevision(int revision) {
+    s_boardRevision = revision;
 }
 
 float VersionSpecifics::getPowerOutputACoefficientDivisor() {
-    switch (s_firmwareVersion) {
-        case 0x10:
-            return 1000.0f;
-        default:
+    switch (s_boardRevision) {
+        case 0x11:
             return 500.0f;
+        default:
+            return 1000.0f;
+    }
+}
+
+int8_t VersionSpecifics::getDefaultPowerOutputCoefficientA() {
+    switch (s_boardRevision) {
+        case 0x11:
+            return -93;
+        default:
+            return -18;
+    }
+}
+
+uint8_t VersionSpecifics::getDefaultPowerOutputCoefficientB() {
+    switch (s_boardRevision) {
+        case 0x11:
+            return 69;
+        default:
+            return 23;
+    }
+}
+
+uint8_t VersionSpecifics::getDefaultPowerOutputCoefficientC() {
+    switch (s_boardRevision) {
+        case 0x11:
+            return 191;
+        default:
+            return 95;
     }
 }

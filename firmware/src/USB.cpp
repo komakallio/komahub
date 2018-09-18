@@ -85,6 +85,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case GETOUTPUTSETTINGS: {
                 GetOutputSettingsCommand* cmd = (GetOutputSettingsCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 GetOutputSettingsResponse response;
 
                 const HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
@@ -164,6 +166,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case SETRELAY: {
                 SetRelayCommand* cmd = (SetRelayCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 if (cmd->enabled) {
                     hubConfiguration->getState().relayIsOpenBits |= (1 << cmd->outputNumber);
                 } else {
@@ -176,6 +180,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case SETPWMDUTY: {
                 SetPwmDutyCommand* cmd = (SetPwmDutyCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 hubConfiguration->getState().pwmPercentages[cmd->outputNumber] = cmd->duty;
                 hubConfiguration->saveState();
                 pos += sizeof(SetPwmDutyCommand);
@@ -184,6 +190,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case RESETFUSE: {
                 ResetFuseCommand* cmd = (ResetFuseCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 hubConfiguration->getState().fuseIsBlownBits &= ~(1 << cmd->outputNumber);
                 hubConfiguration->getState().relayIsOpenBits &= ~(1 << cmd->outputNumber);
                 hubConfiguration->saveState();
@@ -195,6 +203,8 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
 
                 ConfigureOutputCommand* cmd = (ConfigureOutputCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 outputSettings.outputs[cmd->outputNumber].type.type = cmd->outputType;
                 outputSettings.outputs[cmd->outputNumber].fuseCurrent = cmd->fuseCurrent;
                 memcpy(outputSettings.outputs[cmd->outputNumber].name, cmd->name, 16);
@@ -233,8 +243,9 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
 
             case CALIBRATEOUTPUT: {
                 HubConfiguration::OutputSettings& outputSettings = hubConfiguration->getOutputSettings();
-
                 CalibrateOutputCommand* cmd = (CalibrateOutputCommand*)&data[pos];
+                if (!isValidOutput(cmd->outputNumber))
+                    break;
                 outputSettings.outputs[cmd->outputNumber].coeffs.a = cmd->a;
                 outputSettings.outputs[cmd->outputNumber].coeffs.b = cmd->b;
                 outputSettings.outputs[cmd->outputNumber].coeffs.c = cmd->c;
@@ -260,6 +271,10 @@ void USB::handlePacket(uint8_t* buffer) {
 
 void USB::init(HubConfiguration* hubConfiguration) {
     USB::hubConfiguration = hubConfiguration;
+}
+
+bool USB::isValidOutput(int output) {
+    return (output >= 0 && output <= 6);
 }
 
 #endif

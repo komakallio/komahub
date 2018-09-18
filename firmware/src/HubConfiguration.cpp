@@ -31,6 +31,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include "HubConfiguration.h"
+#include "VersionSpecifics.h"
 
 #define EEPROM_SIZE 1024
 
@@ -102,10 +103,12 @@ int HubConfiguration::findLatestStateIndex() {
 }
 
 void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms, uint8_t boardRevision) {
+    VersionSpecifics::setBoardRevision(boardRevision);
+
     resetConfiguration();
     this->factoryConfig.serial = serialNumber;
     this->factoryConfig.r6r7divisor = r6ohms / (float)r7ohms;
-    this->factoryConfig.boardRevision = 0x10;
+    this->factoryConfig.boardRevision = boardRevision;
     this->factoryConfig.features.tempprobes = 0;
     this->factoryConfig.features.skyquality = 0;
     this->factoryConfig.features.ambientpth = 0;
@@ -130,9 +133,9 @@ void HubConfiguration::resetConfiguration() {
         output.type.type = DC;
         output.type.pidSensor = 0;
         // Approximate coefficients from a prototype KomaHub
-        output.coeffs.a = -18;
-        output.coeffs.b = 23;
-        output.coeffs.c = 95;
+        output.coeffs.a = VersionSpecifics::getDefaultPowerOutputCoefficientA();
+        output.coeffs.b = VersionSpecifics::getDefaultPowerOutputCoefficientB();
+        output.coeffs.c = VersionSpecifics::getDefaultPowerOutputCoefficientC();
     }
 
     memset(&this->state, 0, sizeof(State));
