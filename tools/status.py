@@ -35,8 +35,8 @@ def factorysettings():
     data = query(0x02)
     if data and len(data) > 0:
         return {
-            'firmwareMajor' : ord(data[0]),
-            'firmwareMinor' : ord(data[1]),
+            'firmwareMajor' : ord(data[1]),
+            'firmwareMinor' : ord(data[0]),
 #            'numberOfOutputs' : ord(data[2]),
             'serial' : ord(data[3]) * 256 + ord(data[2]),
             'boardRevision' : (ord(data[7]) >> 4) + (ord(data[7]) & 0x3)/10.0
