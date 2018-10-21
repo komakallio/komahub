@@ -1,1 +1,4 @@
 theme: jekyll-theme-cayman
+repository: komakallio/komahub
+title: 'KomaHub'
+description: 'Remote Power Switch and Sensor Platform'
