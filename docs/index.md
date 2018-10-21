@@ -6,6 +6,8 @@ KomaHub is an intelligent power and sensor hub designed for astronomical applica
 - Automatic dew heater control, following temperature and dewpoint
 - Collect sensor data of sky quality during exposures
 
+Manual available [in Finnish](manual-finnish.html)
+
 ![KomaHub in use](images/komahub-in-use.jpg)
 
 **Main features**:
