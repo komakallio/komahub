@@ -8,6 +8,8 @@ KomaHub is an intelligent power and sensor hub designed for astronomical applica
 
 Manual available [in Finnish](manual-finnish.html)
 
+Download control software from the [releases page](https://github.com/komakallio/komahub/releases).
+
 ![KomaHub in use](images/komahub-in-use.jpg)
 
 **Main features**:
