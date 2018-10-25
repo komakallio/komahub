@@ -68,14 +68,22 @@ namespace KomaHub
 
         private void DetectDevice(object sender, DoWorkEventArgs args)
         {
-            while (!komaHub.openDevice())
+            try { 
+                while (!komaHub.openDevice())
+                {
+                    StatusText = "No device found";
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        Update(uiState);
+                    });
+                    Thread.Sleep(1000);
+                }
+            } catch (Exception e) 
             {
-                StatusText = "No device found";
                 this.Invoke((MethodInvoker)delegate
                 {
-                    Update(uiState);
+                    MessageBox.Show("Error: " + e.Message);
                 });
-                Thread.Sleep(1000);
             }
 
             var factorySettings = komaHub.readFactorySettings();
