@@ -35,14 +35,6 @@ namespace KomaHub
                 outputTypes[i].SelectedIndex = (int)uiState.Outputs[i].type;
                 fuseCurrents[i].SelectedIndex = (int)uiState.Outputs[i].fuseCurrent;
             }
-
-            checkBoxAmbientPTH.Checked = uiState.FactorySettings.featureAmbientPTH;
-            checkBoxExtTemperature.Checked = uiState.FactorySettings.featureTempProbe;
-            checkBoxSkyQuality.Checked = uiState.FactorySettings.featureSkyQuality;
-            checkBoxSkyTemperature.Checked = uiState.FactorySettings.featureSkyTemperature;
-
-            fuseDelay.SelectedIndex = uiState.FactorySettings.fuseDelay / 100;
-            textBoxSQMOffset.Text = uiState.FactorySettings.sqmOffset.ToString();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -65,9 +57,6 @@ namespace KomaHub
                     uiState.Outputs[i].fuseCurrent = fuseValues[fuseCurrents[i].SelectedIndex];
                     uiState.Outputs[i].type = convertType(outputTypes[i].GetItemText(outputTypes[i].SelectedItem));
                 }
-
-                uiState.FactorySettings.fuseDelay = this.fuseDelay.SelectedIndex * 100;
-                uiState.FactorySettings.sqmOffset = float.Parse(this.textBoxSQMOffset.Text);
 
                 this.settingsReceiver.ApplySettings(uiState);
             }
