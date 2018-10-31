@@ -48,7 +48,7 @@ enum Pin {
     P4 = 7, 
     P5 = 8, 
     P6 = 24,
-    AUX1 = 9,
+    AUX1 = 10,
     AUX1_2 = 11,
     AUX2 = 13,
     LED = 12
