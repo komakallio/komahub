@@ -31,14 +31,13 @@
 
 SkyQuality::Mode SkyQuality::mode = COUNT;
 int SkyQuality::freq = 0;
+bool SkyQuality::sensorPresent;
 HubConfiguration* SkyQuality::hubConfiguration;
 
 void SkyQuality::init(HubConfiguration* hubConfiguration) {
     SkyQuality::hubConfiguration = hubConfiguration;
     SkyQuality::freq = 0;
-
-    if (!hubConfiguration->getFactoryConfig().features.skyquality)
-        return;
+    SkyQuality::sensorPresent = false;
 
     pinMode(KomaHub::AUX1, INPUT);
     pinMode(KomaHub::AUX1_2, INPUT);
@@ -64,9 +63,6 @@ void SkyQuality::switchToCount() {
 }
 
 void SkyQuality::loop() {
-    if (!hubConfiguration->getFactoryConfig().features.skyquality)
-        return;
-
     switch (SkyQuality::mode) {
         case MEASURE:
         {
@@ -89,6 +85,8 @@ void SkyQuality::loop() {
             break;
         }
     }
+    if (freq > 0)
+        sensorPresent = true;
 }
 
 int SkyQuality::getFrequencyHz() {
@@ -97,4 +95,8 @@ int SkyQuality::getFrequencyHz() {
 
 float SkyQuality::getSkyQuality() {
     return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
+}
+
+bool SkyQuality::isSensorPresent() {
+    return sensorPresent;
 }

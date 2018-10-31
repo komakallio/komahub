@@ -33,6 +33,8 @@ float Weather::temperature;
 float Weather::pressure;
 float Weather::humidity;
 
+bool Weather::sensorPresent = false;
+
 void Weather::init(HubConfiguration* hubConfiguration) {
     Weather::hubConfiguration = hubConfiguration;
 
@@ -40,14 +42,20 @@ void Weather::init(HubConfiguration* hubConfiguration) {
     pressure = 0;
     humidity = 0;
 
-    if (!hubConfiguration->getFactoryConfig().features.skyquality)
-        return;
-
-    bme.begin();
+    sensorPresent = bme.begin(0x76);
+    if (sensorPresent) {
+        bme.setSampling(
+            Adafruit_BME280::MODE_NORMAL,
+            Adafruit_BME280::SAMPLING_X16,
+            Adafruit_BME280::SAMPLING_X16,
+            Adafruit_BME280::SAMPLING_X16,
+            Adafruit_BME280::FILTER_OFF,
+            Adafruit_BME280::STANDBY_MS_1000);
+    }
 }
 
 void Weather::loop() {
-    if (!hubConfiguration->getFactoryConfig().features.ambientpth)
+    if (!sensorPresent)
         return;
 
     temperature = bme.readTemperature();
@@ -70,4 +78,8 @@ float Weather::getHumidity() {
 float Weather::getDewPoint() {
     // replace with better formula
     return temperature - ((100 - humidity)/5.0);
+}
+
+bool Weather::isSensorPresent() {
+    return sensorPresent;
 }

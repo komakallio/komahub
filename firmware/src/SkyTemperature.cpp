@@ -22,23 +22,34 @@
  */
 
 #include <Arduino.h>
+#include <Adafruit_MLX90614.h>
+
 #include "HubConfiguration.h"
 #include "SkyTemperature.h"
 
 HubConfiguration* SkyTemperature::hubConfiguration;
 
+static Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+float SkyTemperature::skyTemperature = 0.0f;
+bool SkyTemperature::sensorPresent;
+
 void SkyTemperature::init(HubConfiguration* hubConfiguration) {
     SkyTemperature::hubConfiguration = hubConfiguration;
 
-    if (!hubConfiguration->getFactoryConfig().features.skytemp)
-        return;
+    sensorPresent = mlx.begin();
 }
 
 void SkyTemperature::loop() {
-    if (!hubConfiguration->getFactoryConfig().features.skytemp)
+    if (!sensorPresent)
         return;
+
+    skyTemperature = mlx.readObjectTempC();
 }
 
 float SkyTemperature::getSkyTemperature() {
-    return 0.0f;
+    return skyTemperature;
+}
+
+bool SkyTemperature::isSensorPresent() {
+    return sensorPresent;
 }

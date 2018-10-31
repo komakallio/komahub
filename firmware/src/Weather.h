@@ -33,10 +33,12 @@ public:
     static float getPressure();
     static float getHumidity();
     static float getDewPoint();
+    static bool isSensorPresent();
 
 private:
     static class HubConfiguration* hubConfiguration;
 
+    static bool sensorPresent;
     static float temperature;
     static float pressure;
     static float humidity;

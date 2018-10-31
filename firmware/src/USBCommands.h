@@ -81,6 +81,10 @@ struct GetStatusResponse {
     uint8_t humidity; // 0-100 (%)
     uint16_t pressure; // *10, 10005 = 1000.5 hPa
     uint8_t skyquality; // *10, 210 = 21.0 mag/arcsec^2
+    int16_t skytemperature; // *10, -35 = -3.5 degrees Celsius
+    uint8_t pthpresent; // 1 = pth sensor (BME280) present, 0 = absent
+    uint8_t skyqualitypresent; // 1 = sky quality sensor present, 0 = absent
+    uint8_t skytemperaturepresent; // 1 = sky temperature present, 0 = absent
 } __attribute__((__packed__));
 
 struct GetRawPowerUsageResponse {

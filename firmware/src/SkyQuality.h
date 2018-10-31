@@ -32,6 +32,7 @@ public:
 
     static int getFrequencyHz();
     static float getSkyQuality();
+    static bool isSensorPresent();
 
 private:
     static void switchToCount();
@@ -44,6 +45,7 @@ private:
     } mode;
 
     static int freq;
+    static bool sensorPresent;
     static class HubConfiguration* hubConfiguration;
 };
 

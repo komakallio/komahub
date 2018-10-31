@@ -116,18 +116,23 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 for (int i = 0; i < 6; i++) {
                     response.outputPower[i] = (uint8_t)roundf(PowerOutputs::getOutputPower(i) * 10);
                 }
-                // temperatures
+                // 1-wire temperature probes
                 response.numberOfTemperatureProbes = TemperatureSensors::getNumberOfSensors();
                 for (int i = 0; i < 4; i++) {
                     response.temperatureProbes[i] = TemperatureSensors::getCurrentTemperatureValues()[i] * 10;
                 }
                 // weather
+                response.pthpresent = Weather::isSensorPresent();
                 response.temperature = Weather::getTemperature() * 10;
                 response.humidity = Weather::getHumidity();
                 response.pressure = Weather::getPressure() * 10;
                 response.dewpoint = Weather::getDewPoint() * 10;
-                // SkyQuality
+                // sky quality
+                response.skyqualitypresent = SkyQuality::isSensorPresent();
                 response.skyquality = SkyQuality::getSkyQuality() * 10;
+                // sky temperature
+                response.skytemperaturepresent = SkyTemperature::isSensorPresent();
+                response.skytemperature = SkyTemperature::getSkyTemperature() * 10;
 
                 memcpy(usbSendBuffer, &response, sizeof(GetStatusResponse));
                 RawHID.send(usbSendBuffer, 1000);

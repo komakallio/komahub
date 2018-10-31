@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/jsaukkon/.platformio/penv/bin:/Users/jsaukkon/.platformio/penv:/usr/local/opt/node@8/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/Users/jsaukkon/anaconda/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/Developer/NVIDIA/CUDA-5.5/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Users/jsaukkon/bin:/opt/maven/bin:/opt/local/sbin:/opt/local/bin:/opt/grails-1.3.7/bin:/opt/play-2.0.2/:/usr/local/astrometry/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}

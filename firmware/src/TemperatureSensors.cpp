@@ -36,9 +36,6 @@ bool TemperatureSensors::temperaturesRequested = false;
 HubConfiguration* TemperatureSensors::hubConfiguration;
 
 void TemperatureSensors::init(HubConfiguration* hubConfiguration) {
-    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
-        return;
-
     TemperatureSensors::hubConfiguration = hubConfiguration;
 
     temperaturesRequested = false;
@@ -48,7 +45,7 @@ void TemperatureSensors::init(HubConfiguration* hubConfiguration) {
 }
 
 void TemperatureSensors::loop() {
-    if (!hubConfiguration->getFactoryConfig().features.tempprobes)
+    if (numberOfSensors == 0)
         return;
 
     if (temperaturesRequested) {
