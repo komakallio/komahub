@@ -46,7 +46,7 @@ static HubConfiguration configuration;
 #ifdef CORE_TEENSY_RAWHID
 static Task usbTask(10, TASK_FOREVER, &USB::loop);
 #endif
-static Task skyQualityTask(1000, TASK_FOREVER, &SkyQuality::loop);
+static Task skyQualityTask(50, TASK_FOREVER, &SkyQuality::loop);
 static Task skyTemperatureTask(1000, TASK_FOREVER, &SkyTemperature::loop);
 static Task analogInputTask(10, TASK_FOREVER, &AnalogInput::loop);
 static Task powerOutputsTask(5, TASK_FOREVER, &PowerOutputs::loop);

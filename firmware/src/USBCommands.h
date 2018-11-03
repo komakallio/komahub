@@ -86,6 +86,7 @@ struct GetStatusResponse {
     uint8_t pthpresent; // 1 = pth sensor (BME280) present, 0 = absent
     uint8_t skyqualitypresent; // 1 = sky quality sensor present, 0 = absent
     uint8_t skytemperaturepresent; // 1 = sky temperature present, 0 = absent
+    uint32_t skyqualityfreq; // raw sky quality frequency, *10, 35 = 3.5 Hz
 } __attribute__((__packed__));
 
 struct GetRawPowerUsageResponse {

@@ -130,6 +130,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 // sky quality
                 response.skyqualitypresent = SkyQuality::isSensorPresent();
                 response.skyquality = SkyQuality::getSkyQuality() * 10;
+                response.skyqualityfreq = SkyQuality::getFrequencyHz() * 10;
                 // sky temperature
                 response.skytemperaturepresent = SkyTemperature::isSensorPresent();
                 response.skytemperature = SkyTemperature::getSkyTemperature() * 10;

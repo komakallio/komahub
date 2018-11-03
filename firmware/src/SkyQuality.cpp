@@ -29,10 +29,15 @@
 #include "KomaHubPins.h"
 #include "SkyQuality.h"
 
-SkyQuality::Mode SkyQuality::mode = COUNT;
-int SkyQuality::freq = 0;
+SkyQuality::Mode SkyQuality::mode = MEASURE;
+float SkyQuality::freq = 0;
 bool SkyQuality::sensorPresent;
 HubConfiguration* SkyQuality::hubConfiguration;
+
+static double sum = 0;
+static int count = 0;
+static unsigned long lastMeasureTime = 0;
+static bool usingTimer = false;
 
 void SkyQuality::init(HubConfiguration* hubConfiguration) {
     SkyQuality::hubConfiguration = hubConfiguration;
@@ -42,7 +47,7 @@ void SkyQuality::init(HubConfiguration* hubConfiguration) {
     pinMode(KomaHub::AUX1, INPUT);
     pinMode(KomaHub::AUX1_2, INPUT);
 
-    switchToCount();
+    switchToMeasure();
 }
 
 void SkyQuality::stop() {
@@ -54,12 +59,15 @@ void SkyQuality::switchToMeasure() {
     FreqMeasure.begin();
     FreqCount.end();
     SkyQuality::mode = MEASURE;
+    lastMeasureTime = millis();
+    sum = count = 0;
 }
 
 void SkyQuality::switchToCount() {
     FreqCount.begin(1000);
     FreqMeasure.end();
     SkyQuality::mode = COUNT;
+    sum = count = 0;
 }
 
 void SkyQuality::loop() {
@@ -67,34 +75,68 @@ void SkyQuality::loop() {
         case MEASURE:
         {
             if (FreqMeasure.available()) {
-                freq = FreqMeasure.read();
+                SkyQuality::sensorPresent = true;
+
+                unsigned long now = millis();
+                unsigned long timeSinceLastMeasure = now - lastMeasureTime;
+                lastMeasureTime = now;
+                if (timeSinceLastMeasure > 1000) {
+                    // Over once second since last pulse. Just measure the time interval directly when we are below 1Hz
+                    // (SkyQuality::loop is driven at 20Hz so there is +-25ms error which shouldn't skew results too much)
+                    usingTimer = true;
+                    SkyQuality::freq = 1.0/(timeSinceLastMeasure/1000.0);
+                    return;
+                }
+
+                if (usingTimer) {
+                    // Previous freq sample was produced from a time interval 
+                    // Reset counters to continue normal operations
+                    usingTimer = false;
+                    count = sum = 0;
+                }
+
+                sum += FreqMeasure.read();
+                count = count + 1;
+                if (count > 10) {
+                    SkyQuality::freq = (sum > 0 ? FreqMeasure.countToFrequency(sum/count) : 0);
+                    sum = count = 0;
+                }
             }
-            if (freq > 1500) {
+            
+            if (SkyQuality::freq > 1500) {
                 switchToCount();
             }
             break;
         }
         case COUNT:
         {
-            if (FreqMeasure.available()) {
-                freq = FreqCount.read();
+            if (FreqCount.available()) {
+                SkyQuality::sensorPresent = true;
+                sum += FreqCount.read();
+                count++;
+
+                if (count >= 5) {
+                    SkyQuality::freq = sum/count;
+                    sum = count = 0;
+                }                
             }
-            if (freq < 1000) {
+            if (SkyQuality::freq < 1000) {
                 switchToMeasure();
             }
             break;
         }
     }
-    if (freq > 0)
-        sensorPresent = true;
 }
 
-int SkyQuality::getFrequencyHz() {
+float SkyQuality::getFrequencyHz() {
     return freq;
 }
 
 float SkyQuality::getSkyQuality() {
-    return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
+    if (freq > 0)
+        return hubConfiguration->getFactoryConfig().skyQualityOffset/10.0 - 2.5 * log10(freq);
+    else
+        return 22.0f;
 }
 
 bool SkyQuality::isSensorPresent() {

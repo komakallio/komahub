@@ -30,7 +30,7 @@ public:
     static void loop();
     static void stop();
 
-    static int getFrequencyHz();
+    static float getFrequencyHz();
     static float getSkyQuality();
     static bool isSensorPresent();
 
@@ -44,7 +44,7 @@ private:
         MEASURE
     } mode;
 
-    static int freq;
+    static float freq;
     static bool sensorPresent;
     static class HubConfiguration* hubConfiguration;
 };
