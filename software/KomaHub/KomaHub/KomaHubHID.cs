@@ -99,7 +99,7 @@ namespace KomaHub
                 recv(result);
             }
             KomahubFactorySettings factorySettings = new KomahubFactorySettings();
-            factorySettings.FirmwareVersion = (result[0] << 8) + result[1];
+            factorySettings.FirmwareVersion = (result[1] << 8) + result[0];
             factorySettings.SerialNumber = (result[3] << 8) + result[2];
             return factorySettings;
         }
