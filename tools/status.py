@@ -57,10 +57,14 @@ def toint16(a, b):
         value = -(65536-value)
     return value/10.0
 
-def status():
+def toint32(a, b, c, d):
+    value = (ord(a) + ord(b)*256 + ord(c)*65536 + ord(d)*65536*256) / 10.0
+    return value
+
+def status(major, minor):
     data = query(0x04)
     if data and len(data) > 0:
-        return {
+        result = {
             'relayIsOpen' : ord(data[0]),
             'fuseIsBlown' : ord(data[1]),
             'pwmPercentages' : [ ord(data[2]), ord(data[3]), ord(data[4]), ord(data[5]), ord(data[6]), ord(data[7]) ],
@@ -72,14 +76,22 @@ def status():
             'dewpoint' : toint16(data[26], data[27]),
             'humidity' : ord(data[28]),
             'pressure' : toint16(data[29], data[30]),
-            'skyquality' : ord(data[31])
-         }
+            'skyquality' : float(ord(data[31])/10.0),
+        }
+        if major >= 1 and minor >= 2:
+            result['skytemperature'] = toint16(data[32], data[33])
+            result['skyambienttemperature'] = toint16(data[34], data[35])
+            result['pthpresent'] = ord(data[36]) > 0
+            result['skyqualitypresent'] = ord(data[37]) > 0
+            result['skytemperaturepresent'] = ord(data[38]) > 0
+            result['skyqualityfreq'] = toint32(data[39], data[40], data[41], data[42])
+        return result
     else:
         raise IOError("No data received")
 
 if __name__ == '__main__':
     settings = factorysettings()
-    data = status()
+    data = status(settings['firmwareMajor'], settings['firmwareMinor'])
     print 'KomaHub v%s, firmware v%s.%s, serial #%05d' % (settings['boardRevision'], settings['firmwareMajor'], settings['firmwareMinor'], settings['serial'])
     print 'Input Voltage: %1.1fV' % data['inputVoltage']
     for i in range(0, 6):
@@ -88,11 +100,20 @@ if __name__ == '__main__':
             (' FUSE' if (data['fuseIsBlown'] & (1 << i)) != 0 else ''),
             (' %d%%' % data['pwmPercentages'][i]),
             data['outputCurrents'][i])
-    print 'Temperature: %1.1f C' % (data['temperature'])
-    print 'Dewpoint: %1.1f C' % (data['dewpoint'])
-    print 'Humidity: %1.1f%%' % data['humidity']
-    print 'Pressure: %1.1f hPa' % (data['humidity'])
+    print 'Ambient PTH sensor: %s' % ('yes' if data['pthpresent'] else 'no')
+    if data['pthpresent']:
+        print 'Temperature: %1.1f C' % (data['temperature'])
+        print 'Dewpoint: %1.1f C' % (data['dewpoint'])
+        print 'Humidity: %1.1f%%' % data['humidity']
+        print 'Pressure: %1.1f hPa' % (data['humidity'])
     print 'External temperature sensors: %d' % data['numTemperatureSensors']
     for i in range(0, data['numTemperatureSensors']):
         print 'Temperature %d: %1.1f C' % ((i+1), data['temperatures'][i])
-    print 'Sky quality: %1.1f mag/arcsec^2' % (data['skyquality'])
+    print 'Sky quality sensor: %s' % ('yes' if data['skyqualitypresent'] else 'no')
+    if data['skyqualitypresent']:
+        print 'Sky quality: %1.1f mag/arcsec^2' % (data['skyquality'])
+        print 'Sky quality frequency: %.1f' % data['skyqualityfreq']
+    print 'Sky temperature sensor: %s' % ('yes' if data['skytemperaturepresent'] else 'no')
+    if data['skytemperaturepresent']:
+        print 'Sky temperature: %1.1f C' % (data['skytemperature'])
+        print 'Ambient temperature: %1.1f C' % (data['skyambienttemperature'])
