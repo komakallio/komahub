@@ -133,6 +133,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 // sky temperature
                 response.skytemperaturepresent = SkyTemperature::isSensorPresent();
                 response.skytemperature = SkyTemperature::getSkyTemperature() * 10;
+                response.skyambienttemperature = SkyTemperature::getAmbientTemperature() * 10;
 
                 memcpy(usbSendBuffer, &response, sizeof(GetStatusResponse));
                 RawHID.send(usbSendBuffer, 1000);

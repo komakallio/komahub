@@ -30,12 +30,14 @@ public:
     static void loop();
 
     static float getSkyTemperature();
+    static float getAmbientTemperature();
     static bool isSensorPresent();
 
 private:
     static class HubConfiguration* hubConfiguration;
     static bool sensorPresent;
     static float skyTemperature;
+    static float ambientTemperature;
 };
 
 #endif

@@ -31,12 +31,15 @@ HubConfiguration* SkyTemperature::hubConfiguration;
 
 static Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 float SkyTemperature::skyTemperature = 0.0f;
+float SkyTemperature::ambientTemperature = 0.0f;
 bool SkyTemperature::sensorPresent;
 
 void SkyTemperature::init(HubConfiguration* hubConfiguration) {
     SkyTemperature::hubConfiguration = hubConfiguration;
 
     sensorPresent = mlx.begin();
+    if (sensorPresent) 
+        sensorPresent = mlx.readObjectTempC() < 100.0;
 }
 
 void SkyTemperature::loop() {
@@ -44,10 +47,15 @@ void SkyTemperature::loop() {
         return;
 
     skyTemperature = mlx.readObjectTempC();
+    ambientTemperature = mlx.readAmbientTempC();
 }
 
 float SkyTemperature::getSkyTemperature() {
     return skyTemperature;
+}
+
+float SkyTemperature::getAmbientTemperature() {
+    return ambientTemperature;
 }
 
 bool SkyTemperature::isSensorPresent() {
