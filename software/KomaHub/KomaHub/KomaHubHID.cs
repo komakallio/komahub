@@ -160,7 +160,40 @@ namespace KomaHub
             }
             status.inputVoltage = result[2 + 6] / 10.0f;
 
+            status.numberOfExternalTemperatures = result[15];
+            status.externalTemperatures[0] = readInt16Float(result[16], result[17]);
+            status.externalTemperatures[1] = readInt16Float(result[18], result[19]);
+            status.externalTemperatures[2] = readInt16Float(result[20], result[21]);
+            status.externalTemperatures[3] = readInt16Float(result[22], result[23]);
+
+            status.temperature = readInt16Float(result[24], result[25]);
+            status.dewpoint = readInt16Float(result[26], result[27]);
+            status.humidity = result[28];
+            status.pressure = readInt16Float(result[29], result[30]);
+            status.skyQuality = result[31] / 10.0f;
+
+            status.skyTemperature = readInt16Float(result[32], result[33]);
+            status.skyTemperatureAmbient = readInt16Float(result[34], result[35]);
+            status.pthPresent = result[36] > 0;
+            status.skyQualityPresent = result[37] > 0;
+            status.skyTemperaturePresent = result[38] > 0;
+            status.skyQualityFreq = readUInt32Float(result[39], result[40], result[41], result[42]);
+
             return status;
+        }
+
+        private static float readInt16Float(byte a, byte b)
+        {
+            int value = a + b * 256;
+            if (value >= 32768)
+                value = -(65536 - value);
+            return value / 10.0f;
+        }
+
+        private static float readUInt32Float(byte a, byte b, byte c, byte d)
+        {
+            int value = a + b * 256 + c * 256 * 256 + d * 256 * 256 *256;
+            return value / 10.0f;
         }
 
         public KomahubOutput readOutput(int outputNumber)

@@ -26,13 +26,19 @@ namespace KomaHub
         public float inputVoltage;
         public float[] outputCurrent = new float[6];
 
+        public bool pthPresent;
         public float temperature;
         public float humidity;
         public float pressure;
-        public float externalTemperature;
+        public float dewpoint;
+        public int numberOfExternalTemperatures;
+        public float[] externalTemperatures = new float[4];
+        public bool skyTemperaturePresent;
         public float skyTemperature;
         public float skyTemperatureAmbient;
         public float skyQuality;
+        public bool skyQualityPresent;
+        public float skyQualityFreq;
     }
 
     public class KomahubOutput

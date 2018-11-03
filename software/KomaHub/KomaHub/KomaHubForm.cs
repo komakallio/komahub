@@ -25,6 +25,7 @@ namespace KomaHub
         private KomaHubHID komaHub = new KomaHubHID();
         private WebServer webServer;
         private bool disableUpdates = false;
+        private ToolTip sqmToolTip = new ToolTip();
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
@@ -174,30 +175,41 @@ namespace KomaHub
             UpdateRelayUI(3, this.output4Number, this.output4Name, this.output4Current, this.pwmDuty4, this.buttonRelay4);
             UpdateRelayUI(4, this.output5Number, this.output5Name, this.output5Current, this.pwmDuty5, this.buttonRelay5);
             UpdateRelayUI(5, this.output6Number, this.output6Name, this.output6Current, this.pwmDuty6, this.buttonRelay6);
-            
-            this.labelTemperature.Text = string.Format("{0:F1} °C", uiState.Status.temperature);
-            this.labelTemperature.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelTemperatureTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelHumidity.Text = string.Format("{0:F1} %", uiState.Status.humidity);
-            this.labelHumidity.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelHumidityTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelPressure.Text = string.Format("{0:F0} hPa", Math.Round(uiState.Status.pressure));
-            this.labelPressure.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelPressureTitle.Enabled = uiState.FactorySettings.featureAmbientPTH;
-            this.labelExternalTemperature.Text = string.Format("{0:F1} °C", uiState.Status.externalTemperature);
-            this.labelExternalTemperature.Enabled = uiState.FactorySettings.featureTempProbe;
-            this.labelExternalTemperatureTitle.Enabled = uiState.FactorySettings.featureTempProbe;
+    
+            if (uiState.Status.pthPresent)
+                this.labelTemperature.Text = string.Format("{0:F1} °C", uiState.Status.temperature);
+            this.labelTemperature.Enabled = uiState.Status.pthPresent;
+            this.labelTemperatureTitle.Enabled = uiState.Status.pthPresent;
+            if (uiState.Status.pthPresent)
+                this.labelHumidity.Text = string.Format("{0:F1} %", uiState.Status.humidity);
+            this.labelHumidity.Enabled = uiState.Status.pthPresent;
+            this.labelHumidityTitle.Enabled = uiState.Status.pthPresent;
+            if (uiState.Status.pthPresent)
+                this.labelPressure.Text = string.Format("{0:F0} hPa", Math.Round(uiState.Status.pressure));
+            this.labelPressure.Enabled = uiState.Status.pthPresent;
+            this.labelPressureTitle.Enabled = uiState.Status.pthPresent;
+            if (uiState.Status.numberOfExternalTemperatures > 0)
+                this.labelExternalTemperature.Text = string.Format("{0:F1} °C", uiState.Status.externalTemperatures[0]);
+            this.labelExternalTemperature.Enabled = uiState.Status.numberOfExternalTemperatures > 0;
+            this.labelExternalTemperatureTitle.Enabled = uiState.Status.numberOfExternalTemperatures > 0;
 
-            this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature);
-            this.labelSkyTemperature.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureDelta.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperatureAmbient - uiState.Status.skyTemperature);
-            this.labelSkyTemperatureDelta.Enabled = uiState.FactorySettings.featureSkyTemperature;
-            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.FactorySettings.featureSkyTemperature;
+            if (uiState.Status.skyTemperaturePresent)
+                this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature);
+            this.labelSkyTemperature.Enabled = uiState.Status.skyTemperaturePresent;
+            this.labelSkyTemperatureTitle.Enabled = uiState.Status.skyTemperaturePresent;
+            if (uiState.Status.skyTemperaturePresent)
+                this.labelSkyTemperatureDelta.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature - uiState.Status.skyTemperatureAmbient);
+            this.labelSkyTemperatureDelta.Enabled = uiState.Status.skyTemperaturePresent;
+            this.labelSkyTemperatureDeltaTitle.Enabled = uiState.Status.skyTemperaturePresent;
 
-            this.labelSQM.Text = string.Format("{0:F2}", uiState.Status.skyQuality);
-            this.labelSQM.Enabled = uiState.FactorySettings.featureSkyQuality;
-            this.labelSQMTitle.Enabled = uiState.FactorySettings.featureSkyQuality;
+            if (uiState.Status.skyQualityPresent)
+            {
+                this.labelSQM.Text = string.Format("{0:F1} mag/as²", uiState.Status.skyQuality);
+                this.sqmToolTip.SetToolTip(this.labelSQM, string.Format("{0:F1} Hz", uiState.Status.skyQualityFreq));
+            }
+
+            this.labelSQM.Enabled = uiState.Status.skyQualityPresent;
+            this.labelSQMTitle.Enabled = uiState.Status.skyQualityPresent;
 
             this.labelInputVoltage.Text = string.Format("{0:F1} V", uiState.Status.inputVoltage);
             this.labelInputVoltage.ForeColor = uiState.Status.inputVoltage < 12.0 || uiState.Status.inputVoltage >= 14.0 ? Color.Red : Color.Black;
