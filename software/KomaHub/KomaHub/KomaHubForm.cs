@@ -188,10 +188,19 @@ namespace KomaHub
                 this.labelPressure.Text = string.Format("{0:F0} hPa", Math.Round(uiState.Status.pressure));
             this.labelPressure.Enabled = uiState.Status.pthPresent;
             this.labelPressureTitle.Enabled = uiState.Status.pthPresent;
+            if (uiState.Status.pthPresent)
+                this.labelDewpoint.Text = string.Format("{0:F1} °C", Math.Round(uiState.Status.dewpoint));
+            this.labelDewpoint.Enabled = uiState.Status.pthPresent;
+            this.labelDewpointTitle.Enabled = uiState.Status.pthPresent;
             if (uiState.Status.numberOfExternalTemperatures > 0)
                 this.labelExternalTemperature.Text = string.Format("{0:F1} °C", uiState.Status.externalTemperatures[0]);
             this.labelExternalTemperature.Enabled = uiState.Status.numberOfExternalTemperatures > 0;
             this.labelExternalTemperatureTitle.Enabled = uiState.Status.numberOfExternalTemperatures > 0;
+
+            if (uiState.Status.numberOfExternalTemperatures > 1)
+                this.labelExternalTemperature2.Text = string.Format("{0:F1} °C", uiState.Status.externalTemperatures[1]);
+            this.labelExternalTemperature2.Enabled = uiState.Status.numberOfExternalTemperatures > 1;
+            this.labelExternalTemperature2Title.Enabled = uiState.Status.numberOfExternalTemperatures > 1;
 
             if (uiState.Status.skyTemperaturePresent)
                 this.labelSkyTemperature.Text = string.Format("{0:F1} °C", uiState.Status.skyTemperature);

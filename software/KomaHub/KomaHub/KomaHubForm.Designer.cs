@@ -85,6 +85,10 @@ namespace KomaHub
             this.firmwareLabel = new System.Windows.Forms.Label();
             this.titlePictureBox = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelDewpointTitle = new System.Windows.Forms.Label();
+            this.labelExternalTemperature2Title = new System.Windows.Forms.Label();
+            this.labelExternalTemperature2 = new System.Windows.Forms.Label();
+            this.labelDewpoint = new System.Windows.Forms.Label();
             this.groupBoxRelayControl.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBoxSensors.SuspendLayout();
@@ -626,7 +630,7 @@ namespace KomaHub
             this.labelInputVoltage.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelInputVoltage.AutoSize = true;
             this.labelInputVoltage.ForeColor = System.Drawing.Color.Red;
-            this.labelInputVoltage.Location = new System.Drawing.Point(336, 63);
+            this.labelInputVoltage.Location = new System.Drawing.Point(336, 85);
             this.labelInputVoltage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelInputVoltage.Name = "labelInputVoltage";
             this.labelInputVoltage.Size = new System.Drawing.Size(44, 15);
@@ -638,7 +642,7 @@ namespace KomaHub
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(193, 63);
+            this.label4.Location = new System.Drawing.Point(193, 85);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(77, 15);
@@ -653,7 +657,7 @@ namespace KomaHub
             this.groupBoxSensors.Margin = new System.Windows.Forms.Padding(10, 10, 10, 2);
             this.groupBoxSensors.Name = "groupBoxSensors";
             this.groupBoxSensors.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBoxSensors.Size = new System.Drawing.Size(388, 104);
+            this.groupBoxSensors.Size = new System.Drawing.Size(388, 125);
             this.groupBoxSensors.TabIndex = 9;
             this.groupBoxSensors.TabStop = false;
             this.groupBoxSensors.Text = "Sensors";
@@ -666,32 +670,38 @@ namespace KomaHub
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.94737F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.31579F));
             this.tableLayoutPanel2.Controls.Add(this.labelTemperatureTitle, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureDelta, 3, 0);
-            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperature, 3, 1);
-            this.tableLayoutPanel2.Controls.Add(this.labelSQM, 3, 2);
             this.tableLayoutPanel2.Controls.Add(this.labelHumidityTitle, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.labelInputVoltage, 3, 3);
             this.tableLayoutPanel2.Controls.Add(this.labelPressureTitle, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.label4, 2, 3);
-            this.tableLayoutPanel2.Controls.Add(this.labelSQMTitle, 2, 2);
-            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperatureTitle, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureTitle, 2, 1);
-            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperature, 1, 3);
             this.tableLayoutPanel2.Controls.Add(this.labelPressure, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.labelHumidity, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.labelTemperature, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureDeltaTitle, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperatureTitle, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.labelDewpoint, 1, 3);
+            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperature2, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperature2Title, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.labelExternalTemperature, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.labelDewpointTitle, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.label4, 2, 4);
+            this.tableLayoutPanel2.Controls.Add(this.labelSQMTitle, 2, 3);
+            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureTitle, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureDeltaTitle, 2, 1);
+            this.tableLayoutPanel2.Controls.Add(this.labelInputVoltage, 3, 4);
+            this.tableLayoutPanel2.Controls.Add(this.labelSQM, 3, 3);
+            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperature, 3, 2);
+            this.tableLayoutPanel2.Controls.Add(this.labelSkyTemperatureDelta, 3, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(2, 18);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.tableLayoutPanel2.RowCount = 4;
+            this.tableLayoutPanel2.RowCount = 5;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(384, 84);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(384, 105);
             this.tableLayoutPanel2.TabIndex = 29;
             // 
             // labelTemperatureTitle
@@ -709,7 +719,7 @@ namespace KomaHub
             // 
             this.labelSkyTemperatureDelta.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelSkyTemperatureDelta.AutoSize = true;
-            this.labelSkyTemperatureDelta.Location = new System.Drawing.Point(380, 5);
+            this.labelSkyTemperatureDelta.Location = new System.Drawing.Point(380, 25);
             this.labelSkyTemperatureDelta.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSkyTemperatureDelta.Name = "labelSkyTemperatureDelta";
             this.labelSkyTemperatureDelta.Size = new System.Drawing.Size(0, 15);
@@ -720,7 +730,7 @@ namespace KomaHub
             // 
             this.labelSkyTemperature.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelSkyTemperature.AutoSize = true;
-            this.labelSkyTemperature.Location = new System.Drawing.Point(380, 24);
+            this.labelSkyTemperature.Location = new System.Drawing.Point(380, 45);
             this.labelSkyTemperature.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSkyTemperature.Name = "labelSkyTemperature";
             this.labelSkyTemperature.Size = new System.Drawing.Size(0, 15);
@@ -731,7 +741,7 @@ namespace KomaHub
             // 
             this.labelSQM.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelSQM.AutoSize = true;
-            this.labelSQM.Location = new System.Drawing.Point(380, 43);
+            this.labelSQM.Location = new System.Drawing.Point(380, 65);
             this.labelSQM.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSQM.Name = "labelSQM";
             this.labelSQM.Size = new System.Drawing.Size(0, 15);
@@ -742,7 +752,7 @@ namespace KomaHub
             // 
             this.labelHumidityTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelHumidityTitle.AutoSize = true;
-            this.labelHumidityTitle.Location = new System.Drawing.Point(4, 24);
+            this.labelHumidityTitle.Location = new System.Drawing.Point(4, 25);
             this.labelHumidityTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelHumidityTitle.Name = "labelHumidityTitle";
             this.labelHumidityTitle.Size = new System.Drawing.Size(57, 15);
@@ -753,7 +763,7 @@ namespace KomaHub
             // 
             this.labelPressureTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelPressureTitle.AutoSize = true;
-            this.labelPressureTitle.Location = new System.Drawing.Point(4, 43);
+            this.labelPressureTitle.Location = new System.Drawing.Point(4, 45);
             this.labelPressureTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelPressureTitle.Name = "labelPressureTitle";
             this.labelPressureTitle.Size = new System.Drawing.Size(51, 15);
@@ -764,7 +774,7 @@ namespace KomaHub
             // 
             this.labelSQMTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelSQMTitle.AutoSize = true;
-            this.labelSQMTitle.Location = new System.Drawing.Point(193, 43);
+            this.labelSQMTitle.Location = new System.Drawing.Point(193, 65);
             this.labelSQMTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSQMTitle.Name = "labelSQMTitle";
             this.labelSQMTitle.Size = new System.Drawing.Size(66, 15);
@@ -775,7 +785,7 @@ namespace KomaHub
             // 
             this.labelExternalTemperatureTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelExternalTemperatureTitle.AutoSize = true;
-            this.labelExternalTemperatureTitle.Location = new System.Drawing.Point(4, 63);
+            this.labelExternalTemperatureTitle.Location = new System.Drawing.Point(4, 85);
             this.labelExternalTemperatureTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelExternalTemperatureTitle.Name = "labelExternalTemperatureTitle";
             this.labelExternalTemperatureTitle.Size = new System.Drawing.Size(55, 15);
@@ -787,7 +797,7 @@ namespace KomaHub
             // 
             this.labelSkyTemperatureTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelSkyTemperatureTitle.AutoSize = true;
-            this.labelSkyTemperatureTitle.Location = new System.Drawing.Point(193, 24);
+            this.labelSkyTemperatureTitle.Location = new System.Drawing.Point(193, 45);
             this.labelSkyTemperatureTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSkyTemperatureTitle.Name = "labelSkyTemperatureTitle";
             this.labelSkyTemperatureTitle.Size = new System.Drawing.Size(58, 15);
@@ -798,7 +808,7 @@ namespace KomaHub
             // 
             this.labelExternalTemperature.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelExternalTemperature.AutoSize = true;
-            this.labelExternalTemperature.Location = new System.Drawing.Point(189, 63);
+            this.labelExternalTemperature.Location = new System.Drawing.Point(189, 85);
             this.labelExternalTemperature.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelExternalTemperature.Name = "labelExternalTemperature";
             this.labelExternalTemperature.Size = new System.Drawing.Size(0, 15);
@@ -809,7 +819,7 @@ namespace KomaHub
             // 
             this.labelPressure.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelPressure.AutoSize = true;
-            this.labelPressure.Location = new System.Drawing.Point(189, 43);
+            this.labelPressure.Location = new System.Drawing.Point(189, 45);
             this.labelPressure.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelPressure.Name = "labelPressure";
             this.labelPressure.Size = new System.Drawing.Size(0, 15);
@@ -820,7 +830,7 @@ namespace KomaHub
             // 
             this.labelHumidity.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelHumidity.AutoSize = true;
-            this.labelHumidity.Location = new System.Drawing.Point(189, 24);
+            this.labelHumidity.Location = new System.Drawing.Point(189, 25);
             this.labelHumidity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelHumidity.Name = "labelHumidity";
             this.labelHumidity.Size = new System.Drawing.Size(0, 15);
@@ -842,7 +852,7 @@ namespace KomaHub
             // 
             this.labelSkyTemperatureDeltaTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.labelSkyTemperatureDeltaTitle.AutoSize = true;
-            this.labelSkyTemperatureDeltaTitle.Location = new System.Drawing.Point(193, 5);
+            this.labelSkyTemperatureDeltaTitle.Location = new System.Drawing.Point(193, 25);
             this.labelSkyTemperatureDeltaTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSkyTemperatureDeltaTitle.Name = "labelSkyTemperatureDeltaTitle";
             this.labelSkyTemperatureDeltaTitle.Size = new System.Drawing.Size(36, 15);
@@ -854,7 +864,7 @@ namespace KomaHub
             this.labelStatusText.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.labelStatusText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelStatusText.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.labelStatusText.Location = new System.Drawing.Point(93, 433);
+            this.labelStatusText.Location = new System.Drawing.Point(93, 454);
             this.labelStatusText.Margin = new System.Windows.Forms.Padding(2, 10, 2, 0);
             this.labelStatusText.Name = "labelStatusText";
             this.labelStatusText.Size = new System.Drawing.Size(301, 26);
@@ -865,7 +875,7 @@ namespace KomaHub
             // buttonSettings
             // 
             this.buttonSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSettings.Location = new System.Drawing.Point(12, 433);
+            this.buttonSettings.Location = new System.Drawing.Point(12, 454);
             this.buttonSettings.Margin = new System.Windows.Forms.Padding(12, 10, 3, 2);
             this.buttonSettings.Name = "buttonSettings";
             this.buttonSettings.Size = new System.Drawing.Size(76, 23);
@@ -881,7 +891,7 @@ namespace KomaHub
             this.flowLayoutPanel1.SetFlowBreak(this.serialLabel, true);
             this.serialLabel.Font = new System.Drawing.Font("Segoe UI", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.serialLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.serialLabel.Location = new System.Drawing.Point(2, 464);
+            this.serialLabel.Location = new System.Drawing.Point(2, 485);
             this.serialLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.serialLabel.Name = "serialLabel";
             this.serialLabel.Size = new System.Drawing.Size(182, 25);
@@ -896,7 +906,7 @@ namespace KomaHub
             this.flowLayoutPanel1.SetFlowBreak(this.firmwareLabel, true);
             this.firmwareLabel.Font = new System.Drawing.Font("Segoe UI", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.firmwareLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.firmwareLabel.Location = new System.Drawing.Point(2, 494);
+            this.firmwareLabel.Location = new System.Drawing.Point(2, 515);
             this.firmwareLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.firmwareLabel.Name = "firmwareLabel";
             this.firmwareLabel.Size = new System.Drawing.Size(188, 35);
@@ -928,14 +938,59 @@ namespace KomaHub
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(409, 466);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(409, 488);
             this.flowLayoutPanel1.TabIndex = 41;
+            // 
+            // labelDewpointTitle
+            // 
+            this.labelDewpointTitle.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelDewpointTitle.AutoSize = true;
+            this.labelDewpointTitle.Location = new System.Drawing.Point(4, 65);
+            this.labelDewpointTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelDewpointTitle.Name = "labelDewpointTitle";
+            this.labelDewpointTitle.Size = new System.Drawing.Size(61, 15);
+            this.labelDewpointTitle.TabIndex = 29;
+            this.labelDewpointTitle.Text = "Dew point";
+            this.labelDewpointTitle.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // labelExternalTemperature2Title
+            // 
+            this.labelExternalTemperature2Title.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelExternalTemperature2Title.AutoSize = true;
+            this.labelExternalTemperature2Title.Location = new System.Drawing.Point(193, 5);
+            this.labelExternalTemperature2Title.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelExternalTemperature2Title.Name = "labelExternalTemperature2Title";
+            this.labelExternalTemperature2Title.Size = new System.Drawing.Size(64, 15);
+            this.labelExternalTemperature2Title.TabIndex = 41;
+            this.labelExternalTemperature2Title.Text = "Ext Temp 2";
+            // 
+            // labelExternalTemperature2
+            // 
+            this.labelExternalTemperature2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelExternalTemperature2.AutoSize = true;
+            this.labelExternalTemperature2.Location = new System.Drawing.Point(380, 5);
+            this.labelExternalTemperature2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelExternalTemperature2.Name = "labelExternalTemperature2";
+            this.labelExternalTemperature2.Size = new System.Drawing.Size(0, 15);
+            this.labelExternalTemperature2.TabIndex = 41;
+            this.labelExternalTemperature2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelDewpoint
+            // 
+            this.labelDewpoint.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.labelDewpoint.AutoSize = true;
+            this.labelDewpoint.Location = new System.Drawing.Point(189, 65);
+            this.labelDewpoint.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelDewpoint.Name = "labelDewpoint";
+            this.labelDewpoint.Size = new System.Drawing.Size(0, 15);
+            this.labelDewpoint.TabIndex = 41;
+            this.labelDewpoint.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // KomaHubForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(409, 466);
+            this.ClientSize = new System.Drawing.Size(409, 488);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1012,6 +1067,10 @@ namespace KomaHub
         private System.Windows.Forms.DomainUpDown pwmDuty3;
         private System.Windows.Forms.DomainUpDown pwmDuty2;
         private System.Windows.Forms.DomainUpDown pwmDuty1;
+        private System.Windows.Forms.Label labelExternalTemperature2;
+        private System.Windows.Forms.Label labelExternalTemperature2Title;
+        private System.Windows.Forms.Label labelDewpointTitle;
+        private System.Windows.Forms.Label labelDewpoint;
     }
 }
 
