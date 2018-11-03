@@ -255,6 +255,11 @@ namespace KomaHub
             Update(uiState);
         }
 
+        public UIState getUIState()
+        {
+            return this.uiState;
+        }
+
         private void toggleRelay(int n)
         {
             if (uiState.Status.fuseIsBlown[n])
