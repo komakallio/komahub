@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KomaHub"
         mc:Ignorable="d"
+        Icon="pack://application:,,,/Resources/komahub.ico"
         Title="KomaHub" Height="531" Width="429">
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+        <Image Source="pack://application:,,,/Resources/komahub.jpg"/>
+        <GroupBox Header="Power outputs"></GroupBox>
+        <GroupBox Header="Sensors"></GroupBox>
+    </StackPanel>
 </Window>
