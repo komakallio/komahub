@@ -14,14 +14,7 @@ using System.Windows.Shapes;
 
 namespace KomaHub
 {
-    /// <summary>
-    /// Interaction logic for Window1.xaml
-    /// </summary>
-    public partial class KomaHubWindow : Window
+    public partial class App : Application
     {
-        public KomaHubWindow()
-        {
-            InitializeComponent();
-        }
     }
 }

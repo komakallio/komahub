@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Komakallio")]
 [assembly: AssemblyProduct("KomaHub")]
-[assembly: AssemblyCopyright("Copyright © 2017 Jari Saukkonen")]
+[assembly: AssemblyCopyright("Copyright © 2018 Jari Saukkonen")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

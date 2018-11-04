@@ -29,9 +29,12 @@ namespace KomaHub
 
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new KomaHubForm());
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new KomaHubForm());
+            var app = new App();
+            app.InitializeComponent();
+            app.Run();
         }
 
         static bool showKomaHubWindowIfAlreadyRunning()
