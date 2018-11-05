@@ -74,13 +74,15 @@ KomaHubiin voidaan kytkeä ketjuun 1-4kpl DS18B20 lämpötila-anturia. Anturit j
 - Ring = Data
 - Sleeve = GND
 
+Lisäksi tarvitaan ylösvetovastus Data- ja +5V-linjojen väliin. Jos anturisi yhteydessä ei sellaista ole, voi KomaHubin sisäänrakennetun vastuksen kytkeä käyttöön sulkemalla piirilevyltä jumpperi `1-WIRE PULL-UP`.
+
 KomaHub tunnistaa antureiden lukumäärän käynnistyessään. Mittaus tehdään neljälle anturille, joista KomaHubin ohjaussovellus näyttää kaksi ensimmäistä.
 
 ### TSL237 valoisuusanturi
 
-TSL237-valoisuusanturilla voidaan mitata taivaan kirkkautta. Lopputuloksena saadaan vastaava magnitudia/neliökaarisekunti-tulos kuin Unihedronin valmistamilla SQM-mittareilla. Luotettavan tuloksen saamiseksi anturi tarvitsee eteensä IR:n ja UV:n leikkaavan suodattimen sekä linssin jolla mittaukseen haluttu kuvakenttä kohdistetaan anturiin.
+TSL237-valoisuusanturilla voidaan mitata taivaan kirkkautta. Lopputuloksena saadaan vastaava magnitudia/neliökaarisekunti-tulos kuin Unihedronin valmistamilla SQM-mittareilla. Vertailukelpoisen tuloksen saamiseksi anturi tarvitsee eteensä IR:n ja UV:n leikkaavan suodattimen (Unihedronin laitteessa HOYA CM-500) sekä linssin jolla mittaukseen haluttu kuvakenttä kohdistetaan anturiin.
 
-Itse anturi muuttaa kirkkauden taajuuspulssiksi jota KomaHubin mikrokontrolleri lukee. Taajuus **f** muunnetaan mag/arcsec^2 -lukemaksi kaavalla `22 - 2.5 * log10(f)`. Mitattu taajuuslukema on myös saatavilla omia laskelmia varten ohjaussovelluksessa tooltippinä osoittamalla hiirellä Sky Quality -lukemaa.
+Itse anturi muuttaa kirkkauden taajuuspulssiksi jota KomaHubin mikrokontrolleri lukee. Taajuus `f` muunnetaan mag/arcsec^2 -lukemaksi kaavalla `22 - 2.5 * log10(f)`. Mitattu taajuuslukema on myös saatavilla omia laskelmia varten ohjaussovelluksessa tooltippinä osoittamalla hiirellä Sky Quality -lukemaa. Koska anturilta saatavan taajuuden vaihteluväli on erittäin suuri (n. 0,1Hz - 500kHz), käyttää KomaHub sen seuraamiseen kahta eri mekanismia jotta saadaan paras tarkkuus mahdollisimman vähällä CPU-kuormalla. Anturin ollessa käytössä on piirilevyltä suljettava `FREQ CONNECT` -jumpperi, jotta signaali saadaan jaettua mikrokontrollerille kahteen eri pinniin eri lukumekanismien mahdollistamiseksi.
 
 Laite johdotetaan 3,5mm TRS-stereoplugiin seuraavasti:
 
@@ -88,7 +90,7 @@ Laite johdotetaan 3,5mm TRS-stereoplugiin seuraavasti:
 - Ring = OUT (3)
 - Sleeve = GND (1)
 
-Lisäksi laitteen lähelle Vdd ja GND -linjojen väliin tulee liittää 0.1uF -kondensaattori.
+Lisäksi laitteen lähelle Vdd ja GND -linjojen väliin tulee liittää 0.1uF kondensaattori.
 
 **Huom!** Valoisuusanturin tuloksia ei ole vielä päästy vertaamaan ja kalibroimaan oikean SQM-mittarin kanssa. Käyttäjäkokemuksia otetaan vastaan!
 
@@ -101,7 +103,7 @@ BME280 on Boschin valmistama edullinen yhdistelmäanturi, josta saadaan kerralla
 - 5 = SCL
 - 7 = SDA
 
-Valmiissa breakout-laudoissa on yleensä I2C-väylän tarvitsemat pull-up -vastukset valmiina. Omia rakennelmia tai laitteiden ketjuttamista varten KomaHubissa on myös omat ylösvetovastukset jotka saa käyttöön sulkemalla KomaHubin piirilevyltä kaksi "I2C PULL-UP" -jumpperia.
+Valmiissa breakout-laudoissa on yleensä I2C-väylän tarvitsemat ylösvetovastukset valmiina. Omia rakennelmia tai laitteiden ketjuttamista varten KomaHubissa on myös omat ylösvetovastukset jotka saa käyttöön sulkemalla KomaHubin piirilevyltä kaksi `I2C PULL-UP` -jumpperia.
 
 ### MLX90614-sensori pilvisyyden mittaamiseen
 
@@ -113,6 +115,8 @@ Laitetta saa valmiina breakout-lautana, joka liitetään I2C-väylään samalla 
 - 3 = GND
 - 5 = SCL
 - 7 = SDA
+
+Lisäksi KomaHubin piirilevyltä on suljettava `I2C PULL-UP` -jumpperit, jos sensorin yhteydessä ei ole omia ylösvetovastuksia.
 
 ### Muut sensorit
 
