@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KomaHub", "KomaHub\KomaHub.
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{2F61AF7E-5292-4A53-A15E-96F7CC6D15BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KomaHubObservingConditions", "..\KomaHubObservingConditions\KomaHubObservingConditions.csproj", "{64308775-BD4A-469C-BCAB-3ED830B811AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{E50344E2-2D0B-4229-B702-776D507D72C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F61AF7E-5292-4A53-A15E-96F7CC6D15BE}.Debug|Any CPU.ActiveCfg = Debug
 		{2F61AF7E-5292-4A53-A15E-96F7CC6D15BE}.Release|Any CPU.ActiveCfg = Release
+		{64308775-BD4A-469C-BCAB-3ED830B811AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64308775-BD4A-469C-BCAB-3ED830B811AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64308775-BD4A-469C-BCAB-3ED830B811AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64308775-BD4A-469C-BCAB-3ED830B811AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
