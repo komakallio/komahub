@@ -25,12 +25,10 @@
 #include "KomaHubPins.h"
 #include "FanControl.h"
 
-void FanControl::init(class HubConfiguration* hubConfiguration)
-{
+void FanControl::init(class HubConfiguration* hubConfiguration) {
     pinMode(KomaHub::AUX1, OUTPUT);
 }
 
-void FanControl::setFanSpeed(float percentage)
-{
+void FanControl::setFanSpeed(float percentage) {
     analogWrite(KomaHub::AUX1, (int)(percentage*255));
 }
