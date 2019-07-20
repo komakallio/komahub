@@ -21,6 +21,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <Arduino.h>
 #include <TaskScheduler.h>
 #ifdef CORE_TEENSY_SERIAL
 #include <EEPROM.h>
