@@ -32,6 +32,7 @@
 #endif
 
 #include "AnalogInput.h"
+#include "DewController.h"
 #include "FanControl.h"
 #include "HubConfiguration.h"
 #include "PowerOutputs.h"
@@ -48,6 +49,7 @@ static HubConfiguration configuration;
 #ifdef CORE_TEENSY_RAWHID
 static Task usbTask(10, TASK_FOREVER, &USB::loop);
 #endif
+static Task dewControllerTask(1000, TASK_FOREVER, &DewController::loop);
 static Task skyQualityTask(50, TASK_FOREVER, &SkyQuality::loop);
 static Task skyTemperatureTask(1000, TASK_FOREVER, &SkyTemperature::loop);
 static Task analogInputTask(10, TASK_FOREVER, &AnalogInput::loop);
@@ -85,6 +87,9 @@ void setup() {
     taskScheduler.addTask(weatherTask);
 
     FanControl::init(&configuration);
+
+    DewController::init(&configuration);
+    taskScheduler.addTask(dewControllerTask);
 
     taskScheduler.enableAll();
 }
