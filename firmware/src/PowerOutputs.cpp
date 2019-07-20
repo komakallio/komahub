@@ -24,6 +24,7 @@
 #include <Arduino.h>
 
 #include "AnalogInput.h"
+#include "FanControl.h"
 #include "HubConfiguration.h"
 #include "KomaHubPins.h"
 #include "PowerOutputs.h"
@@ -102,6 +103,10 @@ void PowerOutputs::updatePowerOutputs() {
                 break;
             case PWM:
                 digitalWrite(outputPins[output], pwmState(state, output));
+                break;
+            case PWM_FAN:
+                digitalWrite(outputPins[output], state.pwmPercentages[output] > 0 ? HIGH : LOW);
+                FanControl::setFanSpeed(state.pwmPercentages[output]);
                 break;
         }
     }

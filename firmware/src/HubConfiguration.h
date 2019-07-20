@@ -28,7 +28,7 @@ enum OutputType {
     OFF = 0,
     DC = 1,
     PWM = 2,
-    PWM_PID_HEAT = 3,
+    PWM_FAN = 3,
     PWM_PID_COOL = 4,
     PWM_FAST = 5
 };

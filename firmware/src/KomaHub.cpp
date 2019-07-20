@@ -32,6 +32,7 @@
 #endif
 
 #include "AnalogInput.h"
+#include "FanControl.h"
 #include "HubConfiguration.h"
 #include "PowerOutputs.h"
 #include "SkyQuality.h"
@@ -74,9 +75,6 @@ void setup() {
     VoltageMonitor::init(&configuration);
     taskScheduler.addTask(voltageMonitorTask);
 
-    SkyQuality::init(&configuration);
-    taskScheduler.addTask(skyQualityTask);
-
     SkyTemperature::init(&configuration);
     taskScheduler.addTask(skyTemperatureTask);
 
@@ -85,6 +83,8 @@ void setup() {
 
     Weather::init(&configuration);
     taskScheduler.addTask(weatherTask);
+
+    FanControl::init(&configuration);
 
     taskScheduler.enableAll();
 }
