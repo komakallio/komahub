@@ -28,6 +28,11 @@ class FanControl {
 public:
     static void init(class HubConfiguration* hubConfiguration);
     static void setFanSpeed(float percentage);
+    static void loop();
+
+private:
+    static class HubConfiguration* hubConfiguration;
+    static float currentFanSpeed;
 };
 
 #endif

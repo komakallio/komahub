@@ -50,7 +50,7 @@ void TemperatureSensors::loop() {
 
     if (temperaturesRequested) {
         for (int i = 0; i < numberOfSensors; i++) {
-            temperatures[i] = sensors.getTempCByIndex(i);
+            temperatures[i] = sensors.getTempCByIndex(i) + hubConfiguration->getFactoryConfig().temperatureSensorOffsets[i]/10.0f;
         }
     }
 

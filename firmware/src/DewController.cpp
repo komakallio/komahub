@@ -22,53 +22,41 @@
  */
 
 #include <Arduino.h>
-#include <PID_v1.h>
 #include "DewController.h"
 #include "FanControl.h"
 #include "HubConfiguration.h"
 #include "TemperatureSensors.h"
 #include "Weather.h"
 
-#define POWER_OUTPUT_PRIMARY 3
-#define POWER_OUTPUT_SECONDARY 4
-
-#define TEMP_SENSOR_PRIMARY 1
-#define TEMP_SENSOR_PRIMARY_OFFSET 0.5
-#define TEMP_SENSOR_SECONDARY 0
-#define TEMP_SENSOR_SECONDARY_OFFSET 0.5
-#define DEWPOINT_OFFSET 2.0
-#define FAN_COOLDOWN 1.0
-#define FAN_IDLE 0.5
-
-static const double Kp1 = 0, Ki1 = 0, Kd1 = 0;
-static const double Kp2 = 0, Ki2 = 0, Kd2 = 0;
-
-static double primaryInput, primaryOutput, secondaryInput, secondaryOutput, setpoint;
-static PID primaryPid(&primaryInput, &primaryOutput, &setpoint, Kp1, Ki1, Kd1, DIRECT);
-static PID secondaryPid(&secondaryInput, &secondaryOutput, &setpoint, Kp2, Ki2, Kd2, DIRECT);
+#define DEWPOINT_SAFETY_OFFSET 2.0
+#define HEAT_POWER_RANGE 2.0
 
 HubConfiguration* DewController::hubConfiguration;
+bool DewController::enabled = true;
 
 void DewController::init(class HubConfiguration* configuration) {
     hubConfiguration = configuration;
-
-    primaryPid.SetOutputLimits(0.0, 1.0);
-    secondaryPid.SetOutputLimits(0.0, 1.0);
-
-    primaryPid.SetMode(AUTOMATIC);
-    secondaryPid.SetMode(AUTOMATIC);
 }
 
 void DewController::loop() {
-    primaryInput = TemperatureSensors::getCurrentTemperatureValues()[TEMP_SENSOR_PRIMARY] + TEMP_SENSOR_PRIMARY_OFFSET;
-    secondaryInput = TemperatureSensors::getCurrentTemperatureValues()[TEMP_SENSOR_SECONDARY] + TEMP_SENSOR_SECONDARY_OFFSET;
-    setpoint = Weather::getDewPoint() + DEWPOINT_OFFSET;
+    if (!enabled)
+        return;
 
-    FanControl::setFanSpeed(primaryInput > setpoint ? FAN_COOLDOWN : FAN_IDLE);
+    for (int output = 0; output < 6; output++) {
+        if (hubConfiguration->getOutputSettings().outputs[0].type.type != PWM_PID) {
+            continue;
+        }
 
-    primaryPid.Compute();
-    secondaryPid.Compute();
+        int sensor = hubConfiguration->getOutputSettings().outputs[0].type.pidSensor;
+        float currentTemp = TemperatureSensors::getCurrentTemperatureValues()[sensor];
+        float targetTemp = max(Weather::getTemperature(), Weather::getDewPoint() + DEWPOINT_SAFETY_OFFSET);
+        // 100% power at target - HEAT_POWER_RANGE C, 0% at target
+        float outputPower = min(1.0, max(0.0, (targetTemp-currentTemp)/HEAT_POWER_RANGE));
 
-    hubConfiguration->getState().pwmPercentages[POWER_OUTPUT_PRIMARY] = primaryOutput;
-    hubConfiguration->getState().pwmPercentages[POWER_OUTPUT_SECONDARY] = secondaryOutput;
+        hubConfiguration->getState().pwmPercentages[output] = outputPower;
+    }
+}
+
+void DewController::setEnabled(bool enabled) {
+    DewController::enabled = enabled;    
 }

@@ -123,10 +123,7 @@ struct ConfigureOutputCommand {
 struct ConfigureSettingsCommand {
     uint8_t fuseDelay;
     uint8_t skyQualityOffset;
-    uint8_t featureTempProbe;
-    uint8_t featureSkyQuality;
-    uint8_t featureAmbientPTH;
-    uint8_t featureSkyTemperature;
+    int8_t temperatureSensorOffsets[4]; // *10; -35 = -3.5
 } __attribute__((__packed__));
 
 struct CalibrateOutputCommand {

@@ -109,10 +109,6 @@ void HubConfiguration::factoryReset(int serialNumber, int r6ohms, int r7ohms, ui
     this->factoryConfig.serial = serialNumber;
     this->factoryConfig.r6r7divisor = r6ohms / (float)r7ohms;
     this->factoryConfig.boardRevision = boardRevision;
-    this->factoryConfig.features.tempprobes = 0;
-    this->factoryConfig.features.skyquality = 0;
-    this->factoryConfig.features.ambientpth = 0;
-    this->factoryConfig.features.skytemp = 0;
     this->factoryConfig.skyQualityOffset = 210;
     this->factoryConfig.fuseDelay = 10;
     initEEPROM(this->factoryConfig, this->outputSettings, this->state);

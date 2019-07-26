@@ -29,8 +29,7 @@ enum OutputType {
     DC = 1,
     PWM = 2,
     PWM_FAN = 3,
-    PWM_PID_COOL = 4,
-    PWM_FAST = 5
+    PWM_PID = 4
 };
 
 class HubConfiguration {
@@ -43,14 +42,11 @@ public:
         uint8_t skyQualityOffset;
 
         struct Features {
-            uint8_t tempprobes:1;
-            uint8_t skyquality:1;
-            uint8_t ambientpth:1;
-            uint8_t skytemp:1;
-            uint8_t reserved:4;
+            uint8_t reserved:8;
         } features;
 
         uint8_t boardRevision;
+        int8_t temperatureSensorOffsets[4];
         // max 32 bytes
     } __attribute__((__packed__));
 
@@ -79,6 +75,7 @@ public:
         uint8_t relayIsOpenBits;
         uint8_t fuseIsBlownBits;
         uint8_t pwmPercentages[6];
+        uint8_t dewControlActive;
         // 9 bytes
     } __attribute__((__packed__));
 

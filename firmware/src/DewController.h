@@ -28,9 +28,11 @@ class DewController {
 public:
     static void init(class HubConfiguration* hubConfiguration);
     static void loop();
+    static void setEnabled(bool enabled);
 
 private:
     static class HubConfiguration* hubConfiguration;
+    static bool enabled;
 };
 
 #endif

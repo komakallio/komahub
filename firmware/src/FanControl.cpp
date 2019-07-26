@@ -24,11 +24,41 @@
 #include <Arduino.h>
 #include "KomaHubPins.h"
 #include "FanControl.h"
+#include "HubConfiguration.h"
+#include "TemperatureSensors.h"
+#include "Weather.h"
 
-void FanControl::init(class HubConfiguration* hubConfiguration) {
+#define FAN_COOLDOWN 1.0
+#define FAN_IDLE 0.5
+#define FAN_TEMP_HYSTERESIS 0.5
+
+HubConfiguration* FanControl::hubConfiguration;
+float FanControl::currentFanSpeed = 0.0f;
+
+void FanControl::init(class HubConfiguration* configuration) {
+    hubConfiguration = configuration;
     pinMode(KomaHub::AUX1, OUTPUT);
 }
 
 void FanControl::setFanSpeed(float percentage) {
+    currentFanSpeed = percentage;
     analogWrite(KomaHub::AUX1, (int)(percentage*255));
+}
+
+void FanControl::loop() {
+    for (int output = 0; output < 6; output++) {
+        if (hubConfiguration->getOutputSettings().outputs[0].type.type != PWM_FAN) {
+            continue;
+        }
+
+        int sensor = hubConfiguration->getOutputSettings().outputs[0].type.pidSensor;
+        float temperature = TemperatureSensors::getCurrentTemperatureValues()[sensor];
+
+        if (currentFanSpeed == FAN_IDLE && temperature > Weather::getTemperature() + FAN_TEMP_HYSTERESIS) {
+            setFanSpeed(FAN_COOLDOWN);
+        }
+        if (currentFanSpeed == FAN_COOLDOWN && temperature < Weather::getTemperature()) {
+            setFanSpeed(FAN_IDLE);
+        }
+    }
 }

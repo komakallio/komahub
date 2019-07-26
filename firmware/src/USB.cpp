@@ -71,11 +71,7 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 response.serialNumber = factoryConfig.serial;
                 response.fuseDelay = factoryConfig.fuseDelay;
                 response.skyQualityOffset = factoryConfig.skyQualityOffset;
-                response.features = (uint8_t)(
-                    (factoryConfig.features.tempprobes ? (1 << 0) : 0) +
-                    (factoryConfig.features.skyquality ? (1 << 1) : 0) +
-                    (factoryConfig.features.ambientpth ? (1 << 2) : 0) +
-                    (factoryConfig.features.skytemp ? (1 << 3) : 0));
+                response.features = 0;
                 response.boardRevision = factoryConfig.boardRevision;
 
                 memcpy(usbSendBuffer, &response, sizeof(GetFactorySettingsResponse));
@@ -227,21 +223,10 @@ void USB::handleCommands(uint8_t* data, unsigned int maxlen) {
                 factoryConfig.fuseDelay = cmd->fuseDelay;
                 factoryConfig.skyQualityOffset = cmd->skyQualityOffset;
 
-                if (factoryConfig.features.skyquality && !cmd->featureSkyQuality)
-                    SkyQuality::stop();
-                if (!factoryConfig.features.tempprobes && cmd->featureTempProbe)
-                    TemperatureSensors::init(hubConfiguration);
-                if (!factoryConfig.features.skyquality && cmd->featureSkyQuality)
-                    SkyQuality::init(hubConfiguration);
-                if (!factoryConfig.features.skytemp && cmd->featureSkyTemperature)
-                    SkyTemperature::init(hubConfiguration);
-                if (!factoryConfig.features.ambientpth && cmd->featureAmbientPTH)
-                    Weather::init(hubConfiguration);
+                for (int i = 0; i < 4; i++) {
+                    factoryConfig.temperatureSensorOffsets[i] = cmd->temperatureSensorOffsets[i];
+                }
 
-                factoryConfig.features.tempprobes = cmd->featureTempProbe;
-                factoryConfig.features.skyquality = cmd->featureSkyQuality;
-                factoryConfig.features.ambientpth = cmd->featureAmbientPTH;
-                factoryConfig.features.skytemp = cmd->featureSkyTemperature;
                 hubConfiguration->saveFactoryConfig();
 
                 pos += sizeof(ConfigureSettingsCommand);
