@@ -38,6 +38,8 @@ float FanControl::currentFanSpeed = 0.0f;
 void FanControl::init(class HubConfiguration* configuration) {
     hubConfiguration = configuration;
     pinMode(KomaHub::AUX1, OUTPUT);
+    TCCR4A = 0xA3;            // COM4A1, COM4B1, PWM4A, PWM4B
+    TCCR4B = 0x04;            // CK/8  -> 3,92kHz (8MHz 10Bit??))
 }
 
 void FanControl::setFanSpeed(float percentage) {
