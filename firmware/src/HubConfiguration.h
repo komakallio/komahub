@@ -72,11 +72,13 @@ public:
 
     struct State {
         uint8_t counter;
-        uint8_t relayIsOpenBits;
-        uint8_t fuseIsBlownBits;
+        uint8_t relayIsOpenBits:6;
+        uint8_t dewControlActive:1;
+        uint8_t reserved1:1;
+        uint8_t fuseIsBlownBits:6;
+        uint8_t reserved2:2;
         uint8_t pwmPercentages[6];
-        uint8_t dewControlActive;
-        // 9 bytes
+        // 8 bytes
     } __attribute__((__packed__));
 
 public:
