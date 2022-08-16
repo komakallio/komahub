@@ -137,8 +137,8 @@ KomaHubin Windows-sovelluksessa on REST-verkkorajapinta, jolla laitetta on mahdo
 
 ### Lähtöjen kytkentä päälle/pois
 
-`curl -x POST http://localhost:6563/output/1/on`  
-`curl -x POST http://localhost:6563/output/1/off`
+`curl -X POST http://localhost:6563/output/1/on`  
+`curl -X POST http://localhost:6563/output/1/off`
 
 jossa `output` on lähdön numero 1-6.
 
